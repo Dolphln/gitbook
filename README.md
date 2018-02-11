@@ -1,4 +1,4 @@
 # My Awesome Book
 
-This file file serves as your bok's preface, a great place to describe your book's content and ideas.
+收集到的一些很有用的知识，可以重复反复学习！
 
