@@ -1,3 +1,5 @@
+**TF-IDF是一种**[**统计方法**](http://link.zhihu.com/?target=http%3A//baike.baidu.com/item/%25E7%25BB%259F%25E8%25AE%25A1%25E6%2596%25B9%25E6%25B3%2595)**，用以评估一字词对于一个文件集或一个语料库中的其中一份文件的重要程度**
+
 阮一峰的《TF-IDF与余弦相似性的应用（一）：自动提取关键词》，解释的很浅显易懂，容易理解。
 
 [http://www.ruanyifeng.com/blog/2013/03/tf-idf.html](http://www.ruanyifeng.com/blog/2013/03/tf-idf.html)
