@@ -1,4 +1,4 @@
-## 安装LuaJIT {#安装LuaJIT}
+## 安装LuaJIT
 
 ```
 http://luajit.org/download/LuaJIT-2.0.4.tar.gz
@@ -12,7 +12,7 @@ make &&make install 即可
 
 最好使用2.1版本的
 
-## 下载ngx\_devel\_kit {#下载ngx_devel_kit}
+## 下载ngx\_devel\_kit
 
 ```
 https://codeload.github.com/simpl/ngx_devel_kit/zip/master
@@ -95,11 +95,9 @@ configure arguments: --user=www --group=www --prefix=/usr/local/nginx --with-htt
 
 
 # make -j4 && make install
-
-
 ```
 
-## 准备nginx的攻击日志目录 {#准备nginx的攻击日志目录}
+## 准备nginx的攻击日志目录
 
 ```
 # mkdir -p /home/wwwlogs/attack
@@ -107,13 +105,11 @@ configure arguments: --user=www --group=www --prefix=/usr/local/nginx --with-htt
 # chown www.www /home/wwwlogs/attack
 
 # chmod -R 755 /home/wwwlogs/attack
-
-
 ```
 
-## 安装nginx的Lua\_waf模块 {#安装nginx的Lua_waf模块}
+## 安装nginx的Lua\_waf模块
 
-官方地址：https://github.com/loveshell/ngx\_lua\_waf
+官方地址：[https://github.com/loveshell/ngx\_lua\_waf](https://github.com/loveshell/ngx_lua_waf)
 
 ```
 # wget https://codeload.github.com/loveshell/ngx_lua_waf/zip/master
@@ -202,7 +198,6 @@ CCrate="100/60"
     html=[[Please go away~~]]       --警告内容,可在中括号内自定义
 
     备注:不要乱动双引号，区分大小写
-
 ```
 
 ## **重启nginx**
@@ -219,7 +214,6 @@ CCrate="100/60"
 # curl http://xxxx/test.php?id=../etc/passwd
 
 # curl http://192.168.2.12/index.php?cmd=phpinfo();
-
 ```
 
 或者直接在网页上请求
