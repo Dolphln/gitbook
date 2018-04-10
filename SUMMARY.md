@@ -7,6 +7,7 @@
   * [支付漏洞总结](支付漏洞总结.md)
   * [支付方案分析设计](支付方案分析设计.md)
   * [金融科技SDL安全设计checklist](金融科技SDL安全设计checklist.md)
+  * [任意用户密码重置（一）：重置凭证泄漏](ren-yi-yong-hu-mi-ma-zhong-zhi-ff08-yi-ff09-ff1a-zhong-zhi-ping-zheng-xie-lou.md)
 * [大数据](#)
   * [TF-IDF算法](tf-idf算法.md)
 * [机器学习](机器学习.md)
