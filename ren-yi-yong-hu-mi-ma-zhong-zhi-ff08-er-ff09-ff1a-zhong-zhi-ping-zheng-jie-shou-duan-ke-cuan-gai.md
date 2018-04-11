@@ -24,19 +24,19 @@
 
 在第一个首页中输入 test0141 和图片验证码完成“01 安全认证”：
 
-
+![](/assets/密码重置23.png)
 
 请求为：
 
-[![](http://image.3001.net/images/20180128/15171535664875.png!small "image.png")](http://image.3001.net/images/20180128/15171535664875.png)
+![](/assets/密码重置24.png)
 
 输入图片验证码获取短信验证码完成“02 身份验证”：
 
-[![](http://image.3001.net/images/20180128/1517155039379.png!small "image.png")](http://image.3001.net/images/20180128/1517155039379.png)
+![](/assets/密码重置25.png)
 
 请求为：
 
-[![](http://image.3001.net/images/20180128/15171536656715.png!small "image.png")](http://image.3001.net/images/20180128/15171536656715.png)
+![](/assets/密码重置26.png)
 
 后续的 03、04 步不涉及用户名信息，忽略。
 
@@ -44,31 +44,29 @@
 
 第一步，用普通账号 2803870097 进行安全认证：
 
-[![](http://image.3001.net/images/20180128/15171536952700.png!small "image.png")](http://image.3001.net/images/20180128/15171536952700.png)
+![](/assets/密码重置27.png)
 
 第二步，对普通账号 2803870097 进行身份验证：
 
-[![](http://image.3001.net/images/20180128/15171537214674.png!small "image.png")](http://image.3001.net/images/20180128/15171537214674.png)
+![](/assets/密码重置28.png)
 
 拦截发送短信验证码的请求：
 
-[![](http://image.3001.net/images/20180129/15171891469522.png!small "image.png")](http://image.3001.net/images/20180129/15171891469522.png)
+![](/assets/密码重置29.png)
 
 将 user\_name 从 2803870097 篡改为 test0141，控制服务端将验证码发至 test0141 绑定的手机号：
 
-[![](http://image.3001.net/images/20180129/15171892169774.png!small "image.png")](http://image.3001.net/images/20180129/15171892169774.png)
+![](/assets/密码重置210.png)
 
 test0141 的手机号成功接收到验证码 872502，将该验证码填入重置 2803870097 的身份校验页面后提交：
 
-[![](http://image.3001.net/images/20180128/15171540026323.png!small "image.png")](http://image.3001.net/images/20180128/15171540026323.png)
+![](/assets/密码重置211.png)
 
 第三步，输入新密码 PenTest1024 后提交，系统提示重置成功：
 
-[![](http://image.3001.net/images/20180128/15171540217738.png!small "image.png")](http://image.3001.net/images/20180128/15171540217738.png)
+![](/assets/密码重置212.png)
 
 第四步，用 2803870097/PenTest1024 登录，验证成功：
-
-[![](http://image.3001.net/images/20180128/15171542992068.png!small "image.png")](http://image.3001.net/images/20180128/15171542992068.png)
 
 ---
 
