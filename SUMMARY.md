@@ -14,4 +14,5 @@
 * [运维安全](运维安全.md)
   * [nginx+lua实现简单的waf网页防火墙功能](运维安全/nginx+lua实现简单的waf网页防火墙功能.md)
   * [堡垒机](运维安全/堡垒机.md)
+  * [【企业安全实战】数据库审计部署实践](运维安全/3010-qi-ye-an-quan-shi-zhan-3011-shu-ju-ku-shen-ji-bu-shu-shi-jian.md)
 
