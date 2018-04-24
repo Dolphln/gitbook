@@ -26,3 +26,11 @@
 
 [http://www.freebuf.com/vuls/164066.html](#)
 
+## 任意密码重置的一个场景
+
+[http://www.freebuf.com/articles/database/167692.html](http://www.freebuf.com/articles/database/167692.html)   （修改js，让浏览器自动去遍历仅有4位数字的验证码）
+
+
+
+
+

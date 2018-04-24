@@ -8,6 +8,7 @@
   * [支付方案分析设计](支付方案分析设计.md)
   * [金融科技SDL安全设计checklist](金融科技SDL安全设计checklist.md)
   * [账号安全类文章](ren-yi-yong-hu-mi-ma-zhong-zhi-ff08-san-ff09-ff1a-yong-hu-hun-yao.md)
+  * [薅羊毛](hao-yang-mao.md)
 * [大数据](#)
   * [TF-IDF算法](tf-idf算法.md)
 * [机器学习](机器学习.md)
@@ -15,4 +16,6 @@
   * [nginx+lua实现简单的waf网页防火墙功能](运维安全/nginx+lua实现简单的waf网页防火墙功能.md)
   * [堡垒机](运维安全/堡垒机.md)
   * [【企业安全实战】数据库审计部署实践](运维安全/3010-qi-ye-an-quan-shi-zhan-3011-shu-ju-ku-shen-ji-bu-shu-shi-jian.md)
+  * [【企业安全实战】开源HIDS OSSEC部署与扩展使用](运维安全/3010-qi-ye-an-quan-shi-zhan-3011-kai-yuan-hids-ossec-bu-shu-yu-kuo-zhan-shi-yong.md)
+  * [mysql-proxy与packbeat+logstash搭建数据库审计](运维安全/mysql-proxyyu-packbeat-+-logstash-da-jian-shu-ju-ku-shen-ji.md)
 
