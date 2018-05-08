@@ -185,7 +185,7 @@ vi /etc/packetbeat/packetbeat.yml
   max_row_length: 1024
   enable: true
   ports: [4040，4042]
-  
+
 
 日志输出到logstash
 output.logstash:
@@ -194,5 +194,48 @@ output.logstash:
     loadbalance: true
 ```
 
+# 四、logstash配置
 
+配置详情
+
+```
+input {
+    beats {
+           port => 5044
+     }
+}
+
+filter{
+
+    if [query] != "SELECT current_user()"{
+        mutate{
+            remove_field =>["response"]
+        }
+
+    }
+}
+
+output{
+      if [type]=="mysql" {
+            elasticsearch {
+                hosts => ["http:/"]
+                user => ""
+                password => ""
+                index => "logstash-mysql_audit-%{+YYYY.MM.dd}"
+       }
+
+stdout{
+      codec => rubydebug
+   }
+}
+}
+```
+
+当查询语句是SELECT current\_user\(\)时，response会显示返回连接的用户，其他语句无需获取返回信息，避免泄露用户数据信息。
+
+# 五、结果展示
+
+把数据打到es里，然后kibana展示
+
+![](/assets/mysql-proxy-es1.png)![](/assets/mysql-proxy-es2.png)
 
