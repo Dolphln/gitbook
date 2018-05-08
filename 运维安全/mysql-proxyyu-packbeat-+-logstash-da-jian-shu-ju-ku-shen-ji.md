@@ -14,9 +14,137 @@ mysql-proxy：
 
 工作示例：![](/assets/mysql-proxy.png)
 
-我们这里是把packbeat和mysql-proxy都安装在同一台服务器上，作为审计内部员工访问数据库的一种方法，性能应该不存在问题，毕竟并发不高。
+我们这里是把packbeat和mysql-proxy都安装在同一台服务器上，连接mysql-server的流量都要经过mysql-proxy这一层进行转发（虽然它还有其他很强大的功能，这里只使用其转发功能），packbeat进行流量的审计功能，作为审计内部员工访问数据库的一种方法，性能应该不存在问题，毕竟并发不高。
 
-# 二、mysql-proxy安装
+# 二、mysql-proxy安装配置
+
+安装基础包，因为mysql-proxy的逻辑处理需要lua脚本支持，所以要确定是否安装了lua
+
+```
+yum -y install gcc* gcc-c++* autoconf* automake* zlib* libxml* ncurses-devel* libmc rypt* libtool* flex*  pkgconfig*
+```
+
+Mysql Proxy的安装
+
+在https://downloads.mysql.com/archives/proxy/ 这里选择对应的版本下载
+
+解压安装
+
+```
+cd /usr/local/software
+
+tar -zxvf mysql-proxy-0.8.5-linux-el6-x86-64bit.tar.gz
+
+cp mysql-proxy-0.8.5-linux-el6-x86-64bit /usr/local/mysql-proxy
+```
+
+授权
+
+```
+chmod -R 775 /usr/local/mysql-proxy
+
+chown -R mysql:mysql /usr/local/mysql-proxy
+```
+
+环境变量设置
+
+```
+vim /etc/profile   //打开此文件，在文件尾部加上以下内容
+
+ 
+
+LUA_PATH="/usr/local/mysql-proxy/share/doc/mysql-proxy/?.lua"    // lua环境变量的设置
+
+export LUA_PATH
+
+export PATH=$PATH:/usr/local/mysql-proxy/bin     //mysql proxy 环境变量的设置
+```
+
+保存并退出后执行下面命令
+
+`source /etc/profile  // 使变量立即生效`
+
+修改mysql proxy的读写分离脚本的配置
+
+```
+vim /usr/local/mysql-proxy/share/doc/mysql-proxy/rw-splitting.lua
+
+默认最小4个(最大8个)以上的客户端连接才会实现读写分离, 现改为最小1个最大2个，便于读写分离的测试
+
+-- connection pool
+
+if not proxy.global.config.rwsplit then
+
+   proxy.global.config.rwsplit = {
+
+            min_idle_connections = 3000,  // 改为1
+
+            max_idle_connections = 6000,  // 改为2
+
+
+            is_debug = false
+
+            }
+
+    end
+```
+
+这是因为mysql-proxy会检测客户端连接, 当连接没有超过min\_idle\_connections预设值时,
+
+不会进行读写分离, 即查询操作会发生到Master上。我这里由于只是需要它的转发功能，没有设置slave，所以把min\_idle\_connections设置了很大，不然超过了min\_idle\_connections这个值之后，它会去连负责读的slave，会导致连不上。
+
+防火墙设置
+
+```
+ vim /etc/sysconfig/iptables    //打开防火墙配置文件，加入以下内容
+
+ -A INPUT -m state --state NEW -m tcp -p tcp --dport 4040 -j ACCEPT
+
+ 注：mysql-proxy的服务端口默认为4040
+```
+
+启动mysql-proxy
+
+```
+
+vim /usr/local/mysql-proxy/mysql-proxy.sh   // 新建一个shell文件，加入以下内容
+
+ 
+
+#!/bin/sh
+
+mysql-proxy --daemon --log-level=debug --log-file=/var/log/mysql-proxy.log 
+
+        --plugins=proxy -b 192.168.1.219:3306 -r 192.168.1.177:3306 
+
+        --proxy-lua-script="/usr/local/mysql-proxy/share/doc/mysql-proxy/rw-splitting.lua" --plugins=admin
+
+        --admin-username="test" --admin-password="321321" 
+
+        --admin-lua-script="/usr/local/mysql-proxy/share/doc/mysql-proxy/admin.lua"
+        
+ 
+ 
+chmod 775 /usr/local/mysql-proxy/mysql-proxy.sh  // 授予执行权限
+
+./mysql-proxy.sh   // 启动mysql-proxy
+```
+
+log-level=info \#定义log日志级别，由高到低分别有\(error\|warning\|info\|message\|debug\)
+
+daemon=true    \#以守护进程方式运行
+
+keepalive=true \#mysql-proxy崩溃时，尝试重启
+
+
+
+查看mysql-proxy服务端口
+
+`netstat -tupln |grep mysql`
+
+监控启动日志
+
+`tail -f /var/log/mysql-proxy.log`
 
 
 
