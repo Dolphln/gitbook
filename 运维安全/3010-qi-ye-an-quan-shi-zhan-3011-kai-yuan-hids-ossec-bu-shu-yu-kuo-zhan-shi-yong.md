@@ -1,10 +1,12 @@
+原文地址：http://vinc.top/2017/12/26/%E3%80%90%E4%BC%81%E4%B8%9A%E5%AE%89%E5%85%A8%E5%AE%9E%E6%88%98%E3%80%91%E5%BC%80%E6%BA%90hids-ossec%E9%83%A8%E7%BD%B2%E4%B8%8E%E6%89%A9%E5%B1%95%E4%BD%BF%E7%94%A8/
+
+
+
 ## **0x01 概述**
 
 ---
 
 关于HIDS，并不是一个新鲜的话题，规模较大的企业都会选择自研，而如果你刚刚接手一个公司的网络安全，人手相对不足，那么OSSEC能帮助你安全建设初期快速搭建一套安全系统，后期如果遇到瓶颈也可以考虑自研去解决一些问题。
-
-
 
 ## **0x02 主要功能介绍**
 
@@ -52,8 +54,6 @@ check\_diff
 
 事件的输出将存储在一个内部数据库中。每次接收到相同的事件时，输出都会与之前的输出相比较。如果输出发生了变化，将生成一个警告。
 
-
-
 命令监控的具体事例：
 
 默认的ossec.conf中自带的配置检查硬盘空间：
@@ -67,8 +67,6 @@ check\_diff
 
   </localfile>
 ```
-
-
 
 所对应的rule在ossec\_rules.xml
 
@@ -98,7 +96,6 @@ check\_diff
     <command>netstat -tan |grep LISTEN |egrep -v '(127.0.0.1| ::1)' | sort</command>
 
   </localfile>
-
 ```
 
 所对应的rule在ossec\_rules.xml
@@ -116,8 +113,6 @@ check\_diff
 
   </rule>
 ```
-
-
 
 执行的结果保存在queue/diff/下，每次执行会进行比对
 
@@ -305,8 +300,6 @@ check\_perm：监测文件权限
 
 restrict：限制对包含该字符串的文件监测
 
-
-
 &lt;ignore&gt;
 
 配置忽略的文件和目录。所配置的文件和目录依然会检测，不过结果会忽略。
@@ -421,7 +414,7 @@ New sha1sum is : 'a735876ea2090323bd766cfb6bad0f57c6a900f2'
 
 `[root@sec248 cron.daily]# ls`
 
-`logrotate  makewhatis.cron  mlocate.cron  prelink  readahead.cron  tmpwatch`
+`logrotate  makewhatis.cron  mlocate.cron  prelink  readahead.cron  tmpwatch`
 
 cron.daily下有一个定时任务prelink，Prelink利用事先链接代替运行时链接的方法来加速共享库的加载，它不仅可以加快起动速度，还可以减少部分内存开销， 是各种Linux架构上用于减少程序加载时间、缩短系统启动时间和加快应用程序启动的很受欢迎的一个工具，解决方案是添加配置
 
@@ -443,7 +436,7 @@ at least one of file’s dependencies has changed since prelinking
 
 解决方法：/usr/sbin/prelink -av -mR
 
-参考链接：https://stelfox.net/blog/2014/08/dependency-prelink-issues/
+参考链接：[https://stelfox.net/blog/2014/08/dependency-prelink-issues/](https://stelfox.net/blog/2014/08/dependency-prelink-issues/)
 
 ### **3）Rootkit检测**
 
@@ -459,7 +452,6 @@ tmp/mcliZokhb           ! Bash door ::/rootkits/bashdoor.php
 tmp/mclzaKmfa           ! Bash door ::/rootkits/bashdoor.php
 
 dev/.shit/red.tgz       ! Adore Worm ::/rootkits/adorew.php
-
 ```
 
 如果是以”\*”开头的话，会扫描整个系统。
@@ -696,8 +688,6 @@ timeout\_allowed
 
 指定该命令是否支持超时。
 
-
-
 active-response配置参数如下：
 
 disabled
@@ -740,8 +730,6 @@ timeout
 
 以封禁IP为例，指定IP封禁的时间（单位为秒）。
 
-
-
 这里我们来测试一下：
 
 Server：192.168.192.193
@@ -752,7 +740,7 @@ Client（ID:1028） 192.168.192.196
 
 首先看一下SSH登录失败的日志为：
 
-Jul  6 15:15:57 localhost sshd\[28590\]: Failed password for root from 192.168.192.196 port 34108 ssh2
+Jul  6 15:15:57 localhost sshd\[28590\]: Failed password for root from 192.168.192.196 port 34108 ssh2
 
 所对应的decode.xml中的解码规则为：
 
@@ -768,7 +756,6 @@ Jul  6 15:15:57 localhost sshd\[28590\]: Failed password for root from 192.168.
   <order>user, srcip</order>
 
 </decoder>
-
 ```
 
 这里通过正则表达式获取到了user和srcip
@@ -851,15 +838,11 @@ $4 时间戳
 
 $5 规则号
 
-
-
 修改权限和属组
 
 \[root@localhost bin\]\# chown root:ossec test.sh
 
 \[root@localhost bin\]\# chmod 550 test.sh
-
-
 
 然后在192.168.192.196使用错误密码登录192.168.192.193，触发规则，查看日志
 
@@ -897,7 +880,6 @@ Thu Jul  6 17:08:32 CST 2017 /var/ossec/active-response/bin/test.sh delete root 
     <timeout>30</timeout>
 
   </active-response>
-
 ```
 
 这里&lt;location&gt;local&lt;/location&gt;，即仅在触发该规则的Agent有效。
@@ -1076,7 +1058,6 @@ OSSEC HIDS agent_control. List of available agents:
    ID: 000, Name: localhost (server), IP: 127.0.0.1, Active/Local
 
    ID: 1028, Name: 192.168.192.196, IP: any, Active
-
 ```
 
 启动Agent时的INFO信息
@@ -1087,7 +1068,7 @@ OSSEC HIDS agent_control. List of available agents:
 
 \[root@sec248 etc\]\# /var/ossec/bin/agent\_control -i 1024 \| grep keep
 
-Last keep alive:     Wed Dec 13 09:34:06 2017
+Last keep alive:     Wed Dec 13 09:34:06 2017
 
 可以查看agent的上次keepalive时间，超过最大重连时间，会有告警。
 
