@@ -14,6 +14,7 @@
 * [大数据](#)
   * [TF-IDF算法](tf-idf算法.md)
 * [机器学习](机器学习.md)
+  * [机器学习主要术语](机器学习/ji-qi-xue-xi-zhu-yao-zhu-yu.md)
 * [运维安全](运维安全.md)
   * [nginx+lua实现简单的waf网页防火墙功能](运维安全/nginx+lua实现简单的waf网页防火墙功能.md)
   * [堡垒机](运维安全/堡垒机.md)
