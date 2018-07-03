@@ -24,4 +24,6 @@
   * [【企业安全实战】开源HIDS OSSEC部署与扩展使用](运维安全/3010-qi-ye-an-quan-shi-zhan-3011-kai-yuan-hids-ossec-bu-shu-yu-kuo-zhan-shi-yong.md)
   * [mysql-proxy与packbeat+logstash搭建数据库审计](运维安全/mysql-proxyyu-packbeat-+-logstash-da-jian-shu-ju-ku-shen-ji.md)
   * [HTTPS 安全最佳实践](运维安全/https-an-quan-zui-jia-shi-jian.md)
+* [漏洞收集](lou-dong-shou-ji.md)
+  * [漏洞预警 \| 微信支付SDK存在XXE漏洞](lou-dong-shou-ji/lou-dong-yu-jing-wei-xin-zhi-fu-sdk-cun-zai-xxe-lou-dong.md)
 
