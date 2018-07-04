@@ -8,8 +8,7 @@
 
 ### 漏洞详情 {#toc-0}
 
-  
-The SDK  in this page:  https://pay.weixin.qq.com/wiki/doc/api/jsapi.php
+The SDK  in this page:  [https://pay.weixin.qq.com/wiki/doc/api/jsapi.php](https://pay.weixin.qq.com/wiki/doc/api/jsapi.php)
 
 ```
 chapter=11_1
@@ -127,6 +126,8 @@ In order to prove this, I got 2 chinese famous company:
    a、momo: Well-known chat tools like WeChat
    b、vivo ：China's famous mobile phone,that also famous in my country
 ```
+
+## [微信支付SDK漏洞排查修复札记](https://mp.weixin.qq.com/s/IMlqJjltFiPlCjj7P_65Ww) {#activity-name}
 
 
 
