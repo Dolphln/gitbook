@@ -380,3 +380,5 @@ DTD/XXE 攻击笔记分享 [http://www.freebuf.com/articles/web/97833.html](http
 
 从最近的微信支付看XXE漏洞 [http://www.freebuf.com/vuls/176837.html](http://www.freebuf.com/vuls/176837.html)
 
+利用网易一处XXE盲注演示如何通过cloudeye配合实现文件内容读取 [https://www.secpulse.com/archives/49194.html](https://www.secpulse.com/archives/49194.html)
+
