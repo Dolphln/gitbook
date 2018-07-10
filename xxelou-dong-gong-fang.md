@@ -41,7 +41,7 @@ DTD文档中有很多重要的关键字如下：
 实体根据引用方式，还可分为内部实体与外部实体，看看这些实体的申明方式。  
 完整的实体类别可参考[DTD - Entities](https://www.tutorialspoint.com/dtd/dtd_entities.htm)
 
-####  实体类别介绍
+#### 实体类别介绍
 
 参数实体用%实体名称申明，引用时也用%实体名称;其余实体直接用实体名称申明，引用时用&实体名称。  
 参数实体只能在DTD中申明，DTD中引用；其余实体只能在DTD中申明，可在xml文档中引用。
@@ -91,11 +91,32 @@ DTD文档中有很多重要的关键字如下：
 
 由于xxe漏洞主要是利用了DTD引用外部实体导致的漏洞，那么重点看下能引用哪些类型的外部实体。
 
-####  外部实体
+#### 外部实体
 
 外部实体即在DTD中使用
 
+```
+<!ENTITY 实体名称 SYSTEM "URI">
+```
 
+语法引用外部的实体，而非内部实体，那么URL中能写哪些类型的外部实体呢？
+
+主要的有file、http、https、ftp等等，当然不同的程序支持的不一样：
+
+![](/assets/xxe1.png)
+
+实例演示：
+
+```
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE a [
+    <!ENTITY content SYSTEM "file:///etc/passwd">]>
+<foo>
+        <value>&content;</value> 
+</foo>
+```
+
+## 漏洞检测
 
 XML实体分为四种：字符实体，命名实体，外部实体，参数实体
 
@@ -165,4 +186,22 @@ XML实体分为四种：字符实体，命名实体，外部实体，参数实�
 ```
 
 调用过程和第一种方法类似
+
+
+
+
+
+参考：
+
+浅谈XXE漏洞攻击与防御 [https://thief.one/2017/06/20/1/](https://thief.one/2017/06/20/1/)
+
+XXE漏洞以及Blind XXE总结 [https://blog.csdn.net/u011721501/article/details/43775691](https://blog.csdn.net/u011721501/article/details/43775691)
+
+[未知攻焉知防——XXE漏洞攻防](https://security.tencent.com/index.php/blog/msg/69)
+
+[XXE漏洞攻防之我见](https://www.anquanke.com/post/id/86075)
+
+[神奇的Content-Type——在JSON中玩转XXE攻击](http://bobao.360.cn/learning/detail/360.html)
+
+
 
