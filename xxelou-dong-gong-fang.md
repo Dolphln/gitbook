@@ -116,7 +116,7 @@ DTD文档中有很多重要的关键字如下：
 </foo>
 ```
 
-## 漏洞检测
+## 0x02 漏洞检测
 
 XML实体分为四种：字符实体，命名实体，外部实体，参数实体
 
@@ -191,11 +191,17 @@ XML实体分为四种：字符实体，命名实体，外部实体，参数实�
 
 调用过程和第一种方法类似
 
-## **总结**
+## 
+
+## 0x03 **总结**
 
 XML 攻击大都是由解析器发出外部资源请求而造成的，还有结合一些协议的特性可以轻松绕过 xml 格式要求。其中主要的关键字 DOCTYPE（DTD的声明），ENTITY（实体的声明）， SYSTEM、PUBLIC（外部资源申请）。
 
 由与 普通实体 和 参数实体 的灵活引用，从而引发各种套路。
+
+## 
+
+## 0x04 修复方法
 
 **接下来，看一下修复方法：**
 
@@ -362,7 +368,9 @@ factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl",true);
 | [http://apache.org/xml/features/dom/create-entity-ref-nodes](http://apache.org/xml/features/dom/create-entity-ref-nodes) | 这个特性是DOM特性，是否用引用的方式建立实体节点，若设置为true则会建立EntityReference节点，若设置为false则会用实际字符串取代实体引用。 |
 | [http://apache.org/xml/features/dom/include-ignorable-whitespace](http://apache.org/xml/features/dom/include-ignorable-whitespace) | 这个特性是DOM特性，是否将可以忽略的空白字符串包含在DOM树里面，缺省为true。但是笔者本人一般情况下会设置为false。另外仅仅在打开了校验的情况下才可以判断出来是否有空白字符串。因此这个特性是同[http://xml.org/sax/features/validation相关的。](http://xml.org/sax/features/validation相关的。) |
 
-参考：
+
+
+**参考：**
 
 浅谈XXE漏洞攻击与防御 [https://thief.one/2017/06/20/1/](https://thief.one/2017/06/20/1/)
 
