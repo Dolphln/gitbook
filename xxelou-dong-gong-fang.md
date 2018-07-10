@@ -337,8 +337,6 @@ factory.setFeature("http://xml.org/sax/features/external-parameter-entities",fal
 factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl",true);
 ```
 
-
-
 部分feature的定义
 
 | feature |
@@ -379,4 +377,6 @@ XXE漏洞以及Blind XXE总结 [https://blog.csdn.net/u011721501/article/details
 DTD/XXE 攻击笔记分享 [http://www.freebuf.com/articles/web/97833.html](http://www.freebuf.com/articles/web/97833.html)
 
 [https://blog.csdn.net/qq\_32331073/article/details/79941132](https://blog.csdn.net/qq_32331073/article/details/79941132)
+
+从最近的微信支付看XXE漏洞 [http://www.freebuf.com/vuls/176837.html](http://www.freebuf.com/vuls/176837.html)
 
