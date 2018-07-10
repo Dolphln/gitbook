@@ -1,17 +1,99 @@
 ## **0x01:知识准备**
 
 ```
-XXE即XML External Entity Injection，由于程序在解析输入的XML数据时，解析了攻击者伪造的外部实体而产生的。例如PHP中的simplexml_load默认情况下会解析外部实体，有XXE漏洞的标志性函数为simplexml_load_string（）
-
-主要理利用：任意文件读取、内网信息探测（包括端口和相关web指纹识别）、DOS攻击、远程命名执行
-```
-
+XXE漏洞全称XML External Entity Injection即xml外部实体注入漏洞，XXE漏洞发生在应用程序解析XML输入时，
+没有禁止外部实体的加载，导致可加载恶意外部文件，造成文件读取、命令执行、内网端口扫描、攻击内网网站、发起dos攻击等危害。
+xxe漏洞触发的点往往是可以上传xml文件的位置，没有对上传的xml文件进行过滤，导致可上传恶意xml文件。
 由于xxe漏洞与DTD文档相关，因此重点介绍DTD的概念。
+```
 
 ### DTD
 
 文档类型定义（DTD）可定义合法的XML文档构建模块，它使用一系列合法的元素来定义文档的结构。DTD 可被成行地声明于XML文档中（内部引用），也可作为一个外部引用。  
 内部声明DTD:
+
+```
+<!DOCTYPE 根元素 [元素声明]>
+```
+
+引用外部DTD:
+
+```
+<!DOCTYPE 根元素 SYSTEM "文件名">
+```
+
+DTD文档中有很多重要的关键字如下：
+
+* DOCTYPE（DTD的声明）
+* ENTITY（实体的声明）
+* SYSTEM、PUBLIC（外部资源申请）
+
+### 实体
+
+实体可以理解为变量，其必须在DTD中定义申明，可以在文档中的其他位置引用该变量的值。  
+实体按类型主要分为以下四种：
+
+* 内置实体 \(Built-in entities\)
+* 字符实体 \(Character entities\)
+* 通用实体 \(General entities\)
+* 参数实体 \(Parameter entities\)
+
+实体根据引用方式，还可分为内部实体与外部实体，看看这些实体的申明方式。  
+完整的实体类别可参考[DTD - Entities](https://www.tutorialspoint.com/dtd/dtd_entities.htm)
+
+####  实体类别介绍
+
+参数实体用%实体名称申明，引用时也用%实体名称;其余实体直接用实体名称申明，引用时用&实体名称。  
+参数实体只能在DTD中申明，DTD中引用；其余实体只能在DTD中申明，可在xml文档中引用。
+
+**内部实体：**
+
+```
+<!ENTITY 实体名称 "实体的值">
+```
+
+**外部实体:**
+
+```
+<!ENTITY 实体名称 SYSTEM "URI">
+```
+
+**参数实体：**
+
+```
+<!ENTITY % 实体名称 "实体的值">
+或者
+<!ENTITY % 实体名称 SYSTEM "URI">
+```
+
+实例演示：除参数实体外实体+内部实体
+
+```
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE a [
+    <!ENTITY name "nMask">]>
+<foo>
+        <value>&name;</value> 
+</foo>
+```
+
+实例演示：参数实体+外部实体
+
+```
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE a [
+    <!ENTITY % name SYSTEM "file:///etc/passwd">
+    %name;
+]>
+```
+
+注意：%name（参数实体）是在DTD中被引用的，而&name（其余实体）是在xml文档中被引用的。
+
+由于xxe漏洞主要是利用了DTD引用外部实体导致的漏洞，那么重点看下能引用哪些类型的外部实体。
+
+####  外部实体
+
+外部实体即在DTD中使用
 
 
 
@@ -83,6 +165,4 @@ XML实体分为四种：字符实体，命名实体，外部实体，参数实�
 ```
 
 调用过程和第一种方法类似
-
-
 
