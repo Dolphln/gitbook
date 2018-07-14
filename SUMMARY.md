@@ -27,6 +27,7 @@
   * [HTTPS 安全最佳实践](运维安全/https-an-quan-zui-jia-shi-jian.md)
   * [HSTS详解](运维安全/hstsxiang-jie.md)
   * [编写ossec decode](运维安全/bian-xie-ossec-decode.md)
+  * [【企业安全实战】Web中间件EXECVE审计](运维安全/3010-qi-yean-quan-shi-zhan-3011-web-zhong-jian-jian-execve-shen-ji.md)
 * [漏洞收集](lou-dong-shou-ji.md)
   * [漏洞预警 \| 微信支付SDK存在XXE漏洞](lou-dong-shou-ji/lou-dong-yu-jing-wei-xin-zhi-fu-sdk-cun-zai-xxe-lou-dong.md)
 
