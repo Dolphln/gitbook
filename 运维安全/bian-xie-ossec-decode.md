@@ -2,8 +2,8 @@ OSSEC 之所以产生报警，就是由于抓到了信息后由DECODE对信息�
 
 会编写DECODE会对使用OSSEC 有很大的帮助。 这里会要用到OSSEC的一个测试命令 ossec-logtest.
 
- 这里编写一个简单的规则，遇到lion\_00的时候，会产生一条ALERTID 为8888 严重度级别为7的报警信息。  
- 首先是创建一个规则,在/var/ossec/rule 下创建一个testrule.xml  内容为：
+这里编写一个简单的规则，遇到lion\_00的时候，会产生一条ALERTID 为8888 严重度级别为7的报警信息。  
+ 首先是创建一个规则,在/var/ossec/rule 下创建一个testrule.xml  内容为：
 
 ```
 <group name="localtest,">                               //每一组rule 都要有group
@@ -19,12 +19,12 @@ OSSEC 之所以产生报警，就是由于抓到了信息后由DECODE对信息�
 ```
 <decoder name="lion">                     //这里是不规范注释，decoder 名称 上面提到的lion
 <prematch>^lion_00</prematch>            // 匹配的内容    如果是高级的DECODER 还会有很多参数   
-</decoder>  
+</decoder>
 ```
 
 需要说明的是，最好将自己的decode 放到文件稍微靠上的位置。
 
-这个时候，使用 /var/ossec/bin/ossec-logtest  输入lion\_00 会看到
+这个时候，使用 /var/ossec/bin/ossec-logtest  输入lion\_00 会看到
 
 ```
 **Phase 1: Completed pre-decoding.
@@ -43,5 +43,5 @@ OSSEC 之所以产生报警，就是由于抓到了信息后由DECODE对信息�
 
 ![](/assets/ossec_decode1.png)
 
-
+可以使用这种方式编写自己的规则。
 
