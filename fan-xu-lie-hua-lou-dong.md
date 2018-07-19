@@ -25,6 +25,8 @@
     java.io.ObjectInputStream代表对象输入流，它的readObject\(\)方法从一个源输入流中读取字节序列，再把它们反序列化为一个对象，并将其返回。
 ```
 
+### [Java反序列化漏洞分析](https://x.aliyun.com/t/136)     这一篇比较基础，没有基础可以先看这篇
+
 ### [Java序列化和反序列化](https://xz.aliyun.com/t/1825)
 
 ### [java反序列化漏洞从入门到深入](https://xz.aliyun.com/t/2041#toc-6)
