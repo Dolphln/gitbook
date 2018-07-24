@@ -1,4 +1,4 @@
-## **0x01:知识准备**
+## **0x01 知识准备**
 
 ```
 XXE漏洞全称XML External Entity Injection即xml外部实体注入漏洞，XXE漏洞发生在应用程序解析XML输入时，
@@ -368,8 +368,6 @@ factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl",true);
 | [http://apache.org/xml/features/dom/create-entity-ref-nodes](http://apache.org/xml/features/dom/create-entity-ref-nodes) | 这个特性是DOM特性，是否用引用的方式建立实体节点，若设置为true则会建立EntityReference节点，若设置为false则会用实际字符串取代实体引用。 |
 | [http://apache.org/xml/features/dom/include-ignorable-whitespace](http://apache.org/xml/features/dom/include-ignorable-whitespace) | 这个特性是DOM特性，是否将可以忽略的空白字符串包含在DOM树里面，缺省为true。但是笔者本人一般情况下会设置为false。另外仅仅在打开了校验的情况下才可以判断出来是否有空白字符串。因此这个特性是同[http://xml.org/sax/features/validation相关的。](http://xml.org/sax/features/validation相关的。) |
 
-
-
 **参考：**
 
 浅谈XXE漏洞攻击与防御 [https://thief.one/2017/06/20/1/](https://thief.one/2017/06/20/1/)
@@ -389,4 +387,6 @@ DTD/XXE 攻击笔记分享 [http://www.freebuf.com/articles/web/97833.html](http
 从最近的微信支付看XXE漏洞 [http://www.freebuf.com/vuls/176837.html](http://www.freebuf.com/vuls/176837.html)
 
 利用网易一处XXE盲注演示如何通过cloudeye配合实现文件内容读取 [https://www.secpulse.com/archives/49194.html](https://www.secpulse.com/archives/49194.html)
+
+
 
