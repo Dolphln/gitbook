@@ -28,6 +28,7 @@
   * [mysql-proxy与packbeat+logstash搭建数据库审计](运维安全/mysql-proxyyu-packbeat-+-logstash-da-jian-shu-ju-ku-shen-ji.md)
   * [HTTPS 安全最佳实践](运维安全/https-an-quan-zui-jia-shi-jian.md)
   * [HSTS详解](运维安全/hstsxiang-jie.md)
+  * [在OpenVPN上启用AD+google authenicator认证](运维安全/zai-openvpn-shang-qi-yong-ad-+-google-authenicator-ren-zheng.md)
 * [漏洞收集](lou-dong-shou-ji.md)
   * [漏洞预警 \| 微信支付SDK存在XXE漏洞](lou-dong-shou-ji/lou-dong-yu-jing-wei-xin-zhi-fu-sdk-cun-zai-xxe-lou-dong.md)
 
