@@ -105,7 +105,8 @@ ssl off
 这是 openvpn 服务器的主配置文件，"xxx" 用自己喜欢的字串替换，这个配置最重要的是以下两句：
 
 ```
-plugin /usr/lib64/openvpn/plugins/openvpn-plugin-auth-pam.so openvpn reneg-sec 36000
+plugin /usr/lib64/openvpn/plugins/openvpn-plugin-auth-pam.so openvpn 
+reneg-sec 36000
 ```
 
 这里配置的基本思想就是：
