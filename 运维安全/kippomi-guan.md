@@ -16,7 +16,7 @@ kippo是一款优秀的SSH服务蜜罐，它提供了非常逼真的shell交互�
 
 安装依赖包：
 
-github的地址：https://github.com/desaster/kippo
+github的地址：[https://github.com/desaster/kippo](https://github.com/desaster/kippo)
 
 ```
 cd /home/
@@ -211,7 +211,9 @@ mysql> select * from sessions;
 
 * log：存放日志文件
 
-       攻击者命令执行格式：
+  ```
+   攻击者命令执行格式：
+  ```
 
 ```
 2018-08-11 17:12:58+0800 [SSHChannel session (0) on SSHService ssh-connection on HoneyPotTransport,7,10.3.211.14] CMD: uname -a
@@ -219,10 +221,11 @@ mysql> select * from sessions;
 2018-08-11 17:13:23+0800 [SSHChannel session (0) on SSHService ssh-connection on HoneyPotTransport,7,10.3.211.14] CMD: nc
 2018-08-11 17:13:23+0800 [SSHChannel session (0) on SSHService ssh-connection on HoneyPotTransport,7,10.3.211.14] Command not found: nc
 2018-08-11 17:13:28+0800 [SSHChannel session (0) on SSHService ssh-connection on HoneyPotTransport,7,10.3.211.14] CMD: yum
-
 ```
 
-      nmap扫描日志格式：
+```
+  nmap扫描日志格式：
+```
 
 ```
 2018-08-11 17:22:05+0800 [HoneyPotTransport,9,10.3.208.46] connection lost
@@ -232,7 +235,9 @@ mysql> select * from sessions;
 * kippo：核心文件，模拟一些交互式的命令，等等
 * data：存放ssh key,lastlog.txt和userdb.txt lastlog.txt:last命令的输出,即存储了登陆蜜罐的信息,也可以伪造 userdb.txt:可以登陆的用户,可以给一个用户设置多个密码,一个用户一行 格式为username:uid:password
 
-       也会存储一些连接日志，如data/lastlog.txt，有可能是nmap扫描日志，也有可能是真是连接日志
+  ```
+   也会存储一些连接日志，如data/lastlog.txt，有可能是nmap扫描日志，也有可能是真是连接日志
+  ```
 
 ```
 root    pts/0   10.3.208.46     Sat Aug 11 16:46 - 16:46 (00:00)
@@ -242,8 +247,6 @@ root    pts/0   10.3.208.46     Sat Aug 11 17:22 - 17:22 (00:00)
 * honeyfs：etc目录中存在group hostname hosts issue passwd resolv.conf shadow这些 文件,cat /etc/filename目录中对应的文件时会显示这些文本文件中的内容. proc目录中存在cpuinfo meminfo version这些文件,cat /proc/filename目录中对应的文件时会显示这些文本文件中的内容.
 
 * dl: wget等等下载的文件存放的地方
-
-
 
 # 0x04 注意点及优缺点
 
@@ -261,6 +264,10 @@ root    pts/0   10.3.208.46     Sat Aug 11 17:22 - 17:22 (00:00)
 6.log存储在/opt/kippo/log/kippo.log，你也可以修改配置，把log存储到数据库中，数据库的表结构在 /opt/kippo/doc/sql目录中。
 
 7.每一次登录成功后的操作都会把日志单独再存储一份，存储的路径在/opt/kippo/log/tty,可以通过在/opt/kippo/utils中的playlog.py脚本，来重现这个操作过程。
+
+8.mac尝试登陆会出现bug
+2018-08-11 11:37:09+0800 [HoneyPotTransport,2,10.3.208.46] Disconnecting with error, code 3
+        reason: couldn't match all kex parts
 ```
 
 
