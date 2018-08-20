@@ -47,6 +47,16 @@ cp kippo.cfg.dist kippo.cfg
 iptables -t nat -A PREROUTING -p tcp --dport 22 -j REDIRECT --to-ports 2222
 ```
 
+iptables设置：
+
+```
+iptables -F   清空iptables设置（慎用）
+iptables -t nat -A PREROUTING -p tcp --dport 22 -j REDIRECT --to-ports 2222 添加转发记录
+iptables -L -t nat   查看转发规则
+```
+
+![](/assets/kippo-nat.png)
+
 启动kippo
 
 ```
@@ -269,8 +279,6 @@ root    pts/0   10.3.208.46     Sat Aug 11 17:22 - 17:22 (00:00)
 2018-08-11 11:37:09+0800 [HoneyPotTransport,2,10.3.208.46] Disconnecting with error, code 3
         reason: couldn't match all kex parts
 ```
-
-
 
 参考资料：
 
