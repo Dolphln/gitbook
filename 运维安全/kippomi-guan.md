@@ -280,6 +280,47 @@ root    pts/0   10.3.208.46     Sat Aug 11 17:22 - 17:22 (00:00)
         reason: couldn't match all kex parts
 ```
 
+# 0x05 filebeat写入elasticsearch
+
+```
+下载filebeat：
+wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-6.3.2-x86_64.rpm
+
+安装filebeat
+rpm -ivh filebeat-6.3.2-x86_64.rpm
+
+
+编辑 filebeat.yml
+vi /etc/filebeat/filebeat.yml
+
+修改之处
+- type: log
+
+  # Change to true to enable this input configuration.
+  enabled: true
+
+  # Paths that should be crawled and fetched. Glob based paths.
+  paths:
+    - /home/kippo/kippo/log/kippo.log
+    #- c:\programdata\elasticsearch\logs\*
+    
+    
+setup.template:
+  name: "filebeat"
+  pattern: "filebeat.template.json"
+  
+  
+index: "filebeat-kippo-%{+yyyy.MM.dd}"
+  # Array of hosts to connect to.
+  hosts: [":9200"]
+# Optional protocol and basic auth credentials.
+  #protocol: "https"
+  username: "test"
+  password: "test"
+```
+
+效果![](/assets/kippo-es.png)
+
 参考资料：
 
 [https://netsec.ccert.edu.cn/zhugejw/files/2011/09/Kippo-介绍.pdf](https://netsec.ccert.edu.cn/zhugejw/files/2011/09/Kippo-介绍.pdf)
