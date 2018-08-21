@@ -303,13 +303,13 @@ vi /etc/filebeat/filebeat.yml
   paths:
     - /home/kippo/kippo/log/kippo.log
     #- c:\programdata\elasticsearch\logs\*
-    
-    
+
+
 setup.template:
   name: "filebeat"
   pattern: "filebeat.template.json"
-  
-  
+
+
 index: "filebeat-kippo-%{+yyyy.MM.dd}"
   # Array of hosts to connect to.
   hosts: [":9200"]
