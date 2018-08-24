@@ -32,6 +32,7 @@
   * [kippo蜜罐](运维安全/kippomi-guan.md)
 * [漏洞收集](lou-dong-shou-ji.md)
   * [漏洞预警 \| 微信支付SDK存在XXE漏洞](lou-dong-shou-ji/lou-dong-yu-jing-wei-xin-zhi-fu-sdk-cun-zai-xxe-lou-dong.md)
+  * 漏洞预警 \| Struts 2 远程代码执行漏洞（S2-057 / CVE-2018-11776）
 * [编程](bian-cheng.md)
   * [Flask结合APScheduler实现定时任务框架](bian-cheng/flaskjie-he-apscheduler-shi-xian-ding-shi-ren-wu-kuang-jia.md)
 
