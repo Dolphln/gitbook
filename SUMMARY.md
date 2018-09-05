@@ -14,6 +14,7 @@
   * [一个登陆框引起的血案](yi-ge-deng-lu-kuang-yin-qi-de-xie-an.md)
   * [渗透测试技巧-dnslog](shen-tou-ce-shi-ji-5de7-dnslog.md)
   * [xxe漏洞攻防](xxelou-dong-gong-fang.md)
+  * [青藤安全说（第一期）](qing-teng-an-quan-shuo-ff08-di-yi-qi-ff09.md)
 * [大数据](#)
   * [TF-IDF算法](tf-idf算法.md)
 * [机器学习](机器学习.md)
@@ -34,6 +35,4 @@
   * [漏洞预警 \| 微信支付SDK存在XXE漏洞](lou-dong-shou-ji/lou-dong-yu-jing-wei-xin-zhi-fu-sdk-cun-zai-xxe-lou-dong.md)
   * [漏洞预警 \| Struts 2 远程代码执行漏洞（S2-057 / CVE-2018-11776）](lou-dong-shou-ji/lou-dong-yujing-struts-2-yuan-cheng-dai-ma-zhi-xing-lou-dong-ff08-s2-057-cve-2018-11776.md)
   * [GhostScript 沙箱绕过  （命令执行）漏洞](lou-dong-shou-ji/ghostscript-sha-xiang-rao-guo-ff08-ming-ling-zhi-xing-ff09-lou-dong.md)
-* [编程](bian-cheng.md)
-  * [Flask结合APScheduler实现定时任务框架](bian-cheng/flaskjie-he-apscheduler-shi-xian-ding-shi-ren-wu-kuang-jia.md)
 
