@@ -239,3 +239,15 @@ stdout{
 
 ![](/assets/mysql-proxy-es1.png)![](/assets/mysql-proxy-es2.png)
 
+# 六、后续补充
+
+也可使用mysql-router，这是mysql-proxy的一个升级版，相对来说mysql-router的配置更简单一些
+
+安装步骤参考：[https://www.cnblogs.com/JiangLe/p/6626660.html](https://www.cnblogs.com/JiangLe/p/6626660.html)
+
+mysql-proxy如果代理很多的数据库经常会有一些代理掉线，需要配置脚本进行监控重启。
+
+mysql-router的效果还不太清楚，静待观察。
+
+抓取mysql-router的数据包抓不到当前连接用户的包，但能够抓到连接的ip
+
