@@ -245,6 +245,8 @@ stdout{
 
 安装步骤参考：[https://www.cnblogs.com/JiangLe/p/6626660.html](https://www.cnblogs.com/JiangLe/p/6626660.html)
 
+[https://www.cnblogs.com/zengkefu/p/5499706.html](https://www.cnblogs.com/zengkefu/p/5499706.html)
+
 mysql-proxy如果代理很多的数据库经常会有一些代理掉线，需要配置脚本进行监控重启。
 
 mysql-router的效果还不太清楚，静待观察。
