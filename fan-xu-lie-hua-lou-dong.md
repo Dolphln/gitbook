@@ -39,5 +39,7 @@
 
 ### [先知议题解读 \| Java反序列化实战](https://www.anquanke.com/post/id/148593)
 
+### [深入理解JAVA反序列化漏洞](https://www.vulbox.com/knowledge/detail/?id=11)   漏洞盒子的一篇
+
 
 

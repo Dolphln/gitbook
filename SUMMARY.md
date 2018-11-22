@@ -15,6 +15,7 @@
   * [渗透测试技巧-dnslog](shen-tou-ce-shi-ji-5de7-dnslog.md)
   * [xxe漏洞攻防](xxelou-dong-gong-fang.md)
   * [青藤安全说（第一期）](qing-teng-an-quan-shuo-ff08-di-yi-qi-ff09.md)
+  * [Commons Collections Java反序列化漏洞学习笔记](commons-collections-javafan-xu-lie-hua-lou-dong-xue-xi-bi-ji.md)
 * [大数据](#)
   * [TF-IDF算法](tf-idf算法.md)
 * [机器学习](机器学习.md)
