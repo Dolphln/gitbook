@@ -41,14 +41,12 @@ Java应用对用户输入，即不可信数据做了反序列化处理，那么�
 
 # Apache Commons Collections反序列化漏洞分析
 
-```
-    Apache Commons Collections是一个扩展了Java标准库里的Collection结构的第三方基础库，它提供了很多强有力的数据结构类型并且实现了各种集合工具类。作为Apache开源项目的重要组件，Commons Collections被广泛应用于各种Java应用的开发。
-```
+Apache Commons Collections是一个扩展了Java标准库里的Collection结构的第三方基础库，它提供了很多强有力的数据结构类型并且实现了各种集合工具类。作为Apache开源项目的重要组件，Commons Collections被广泛应用于各种Java应用的开发。。
 
-。
+org.apache.commons.collections提供一个类包来扩展和增加标准的Java的collection框架，也就是说这些扩展也属于collection的基本概念，只是功能不同罢了。Java中的collection可以理解为一组对象，collection里面的对象称为collection的对象。具象的collection为\*\*set，list，queue\*\*等等，它们是\*\*集合类型\*\*。换一种理解方式，collection是set，list，queue的抽象。
 
 ```
-    org.apache.commons.collections提供一个类包来扩展和增加标准的Java的collection框架，也就是说这些扩展也属于collection的基本概念，只是功能不同罢了。Java中的collection可以理解为一组对象，collection里面的对象称为collection的对象。具象的collection为**set，list，queue**等等，它们是**集合类型**。换一种理解方式，collection是set，list，queue的抽象。
+
 ```
 
 ![](/assets/apache-java4.png)
@@ -161,7 +159,6 @@ public static Object Reverse_Payload() throws Exception {
                 new InvokerTransformer("getMethod", new Class[] { String.class, Class[].class }, new Object[] { "getRuntime", new Class[0] }),
                 new InvokerTransformer("invoke", new Class[] { Object.class, Object[].class }, new Object[] { null, new Object[0] }),
                 new InvokerTransformer("exec", new Class[] { String.class }, new Object[] { "open /Applications/Calculator.app" }) };
-
 ```
 
 我们构造了一个Transformer数组transformers，第一个参数是“new ConstantTransformer\(Runtime.class\)”，后续均为InvokerTransformer对象，最后用该Transformer数组实例化了transformerChain对象，如果该对象触发了transform\(\)函数,那么transformers将在内一次展开触发各自的transform\(\)方法，由于InvokerTransformer类的特性，可以通过反射触发漏洞。下图是触发后debug截图：
@@ -170,8 +167,7 @@ public static Object Reverse_Payload() throws Exception {
 
 iTransformers\[0\]是ConstantTransformer对象，返回的就是Runtime.class类对象，再此处object也就被赋值为Runtime.class类对象，传入iTransformers\[2\].transform\(\)方法：
 
-![](/assets/apache-java13.png)  
-
+![](/assets/apache-java13.png)
 
 然后依次类推：
 
@@ -212,8 +208,6 @@ TransformedMap.decorate(innermap, null, transformerChain);这个表明outmap这�
 ```
 
 这里的outmap是已经构造好的TransformedMap，现在我们的目的是需要能让服务器端反序列化某对象时，触发outmap的checkSetValue\(\)函数。
-
-
 
 这时类AnnotationInvocationHandler登场了，这个类有一个成员变量memberValues是Map类型，如下所示：  
 ![](/assets/apache-java17.png)
