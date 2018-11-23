@@ -51,13 +51,14 @@ org.apache.commons.collections提供一个类包来扩展和增加标准的Java�
 
 ![](/assets/apache-java4.png)
 
-作为Apache开源项目的重要组件，Commons Collections被广泛应用于各种Java应用的开发，而正是因为在大量web应用程序中这些类的实现以及方法的调用，导致了反序列化用漏洞的普遍性和严重性。　
+作为Apache开源项目的重要组件，Commons Collections被广泛应用于各种Java应用的开发，而正是因为在大量web应用程序中这些类的实现以及方法的调用，导致了反序列化用漏洞的普遍性和严重性。
 
-  
-在Apache Commons Collections中有一个InvokerTransformer类实现了Transformer，主要作用是调用Java的反射机制\\(反射机制是在运行状态中，对于任意一个类，都能够知道这个类的所有属性和方法；对于任意一个对象，都能够调用它的任意一个方法和属性，详细内容请参考：\[http://ifeve.com/java-reflection/\\)\]\(http://ifeve.com/java-reflection/\)来调用任意函数，只需要传入方法名、参数类型和参数，即可调用任意函数。TransformedMap配合sun.reflect.annotation.AnnotationInvocationHandler中的readObject\\(\\)，可以触发漏洞。我们先来看一下大概的逻辑：
+在Apache Commons Collections中有一个InvokerTransformer类实现了Transformer，主要作用是调用Java的反射机制\\(反射机制是在运行状态中，对于任意一个类，都能够知道这个类的所有属性和方法；对于任意一个对象，都能够调用它的任意一个方法和属性，详细内容请参考：\[[http://ifeve.com/java-reflection/\\)\]\(http://ifeve.com/java-reflection/\)](http://ifeve.com/java-reflection/\%29]%28http://ifeve.com/java-reflection/%29来调用任意函数，只需要传入方法名、参数类型和参数，即可调用任意函数。TransformedMap配合sun.reflect.annotation.AnnotationInvocationHandler中的readObject\%28\%29，可以触发漏洞。我们先来看一下大概的逻辑：)
+
+来调用任意函数，只需要传入方法名、参数类型和参数，即可调用任意函数。TransformedMap配合sun.reflect.annotation.AnnotationInvocationHandler中的readObject\\(\\)，可以触发漏洞。我们先来看一下大概的逻辑：
 
 ```markdown
-    
+
 ```
 
 ![](/assets/apache-java5.png)
