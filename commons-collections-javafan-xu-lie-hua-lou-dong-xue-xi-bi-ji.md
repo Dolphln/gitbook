@@ -39,21 +39,27 @@ Java应用对用户输入，即不可信数据做了反序列化处理，那么�
 
 所以这个问题的根源在于类`ObjectInputStream`在反序列化时，没有对生成的对象的类型做限制；假若反序列化可以设置Java类型的白名单，那么问题的影响就小了很多。
 
-#  Apache Commons Collections反序列化漏洞分析
+# Apache Commons Collections反序列化漏洞分析
 
-        Apache Commons Collections是一个扩展了Java标准库里的Collection结构的第三方基础库，它提供了很多强有力的数据结构类型并且实现了各种集合工具类。作为Apache开源项目的重要组件，Commons Collections被广泛应用于各种Java应用的开发。
+```
+    Apache Commons Collections是一个扩展了Java标准库里的Collection结构的第三方基础库，它提供了很多强有力的数据结构类型并且实现了各种集合工具类。作为Apache开源项目的重要组件，Commons Collections被广泛应用于各种Java应用的开发。
+```
 
 。
 
-        org.apache.commons.collections提供一个类包来扩展和增加标准的Java的collection框架，也就是说这些扩展也属于collection的基本概念，只是功能不同罢了。Java中的collection可以理解为一组对象，collection里面的对象称为collection的对象。具象的collection为**set，list，queue**等等，它们是**集合类型**。换一种理解方式，collection是set，list，queue的抽象。
+```
+    org.apache.commons.collections提供一个类包来扩展和增加标准的Java的collection框架，也就是说这些扩展也属于collection的基本概念，只是功能不同罢了。Java中的collection可以理解为一组对象，collection里面的对象称为collection的对象。具象的collection为**set，list，queue**等等，它们是**集合类型**。换一种理解方式，collection是set，list，queue的抽象。
+```
 
 ![](/assets/apache-java4.png)
 
-        作为Apache开源项目的重要组件，Commons Collections被广泛应用于各种Java应用的开发，而正是因为在大量web应用程序中这些类的实现以及方法的调用，导致了反序列化用漏洞的普遍性和严重性。　
+```
+    作为Apache开源项目的重要组件，Commons Collections被广泛应用于各种Java应用的开发，而正是因为在大量web应用程序中这些类的实现以及方法的调用，导致了反序列化用漏洞的普遍性和严重性。　
 
 
 
-         在Apache Commons Collections中有一个InvokerTransformer类实现了Transformer，主要作用是调用Java的反射机制\(反射机制是在运行状态中，对于任意一个类，都能够知道这个类的所有属性和方法；对于任意一个对象，都能够调用它的任意一个方法和属性，详细内容请参考：[http://ifeve.com/java-reflection/\)](http://ifeve.com/java-reflection/)来调用任意函数，只需要传入方法名、参数类型和参数，即可调用任意函数。TransformedMap配合sun.reflect.annotation.AnnotationInvocationHandler中的readObject\(\)，可以触发漏洞。我们先来看一下大概的逻辑：
+     在Apache Commons Collections中有一个InvokerTransformer类实现了Transformer，主要作用是调用Java的反射机制\(反射机制是在运行状态中，对于任意一个类，都能够知道这个类的所有属性和方法；对于任意一个对象，都能够调用它的任意一个方法和属性，详细内容请参考：[http://ifeve.com/java-reflection/\)](http://ifeve.com/java-reflection/)来调用任意函数，只需要传入方法名、参数类型和参数，即可调用任意函数。TransformedMap配合sun.reflect.annotation.AnnotationInvocationHandler中的readObject\(\)，可以触发漏洞。我们先来看一下大概的逻辑：
+```
 
 ![](/assets/apache-java5.png)
 
@@ -123,7 +129,7 @@ public class test3 {
 
 ![](/assets/apache-java6.png)
 
-我们可以看到该方法的作用是：给定一个Object对象经过转换后也返回一个Object，该PoC中利用的是三个实现类：
+我们可以看到该方法的作用是：给定一个Object对象经过转换后也返回一个Object，该PoC中利用的是三个实现类：`ChainedTransformer`，`ConstantTransformer`，`InvokerTransformer`
 
 
 
@@ -134,15 +140,12 @@ public class test3 {
 
 我们可以看到该该方法中采用了反射的方法进行函数调用，Input参数为要进行反射的对象\(反射机制就是可以把一个类,类的成员\(函数,属性\),当成一个对象来操作,希望读者能理解,也就是说,类,类的成员,我们在运行的时候还可以动态地去操作他们.\)，iMethodName,iParamTypes为调用的方法名称以及该方法的参数类型，iArgs为对应方法的参数，在invokeTransformer这个类的构造函数中我们可以发现，这三个参数均为可控参数
 
-
-
 接下来我们看一下ConstantTransformer类的transform\(\)方法：
 
 ![](/assets/apache-java9.png)
 
 该方法很简单，就是返回iConstant属性，该属性也为可控参数：
 
-  
 最后一个ChainedTransformer类很关键，我们先看一下它的构造函数：
 
 ![](/assets/apache-java10.png)
@@ -150,6 +153,8 @@ public class test3 {
 我们可以看出它传入的是一个Transformer数组，接下来看一下它的transform\(\)方法：
 
 ![](/assets/apache-java11.png)
+
+
 
 
 
