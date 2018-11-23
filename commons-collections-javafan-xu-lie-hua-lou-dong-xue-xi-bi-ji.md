@@ -53,7 +53,7 @@ org.apache.commons.collections提供一个类包来扩展和增加标准的Java�
 
 作为Apache开源项目的重要组件，Commons Collections被广泛应用于各种Java应用的开发，而正是因为在大量web应用程序中这些类的实现以及方法的调用，导致了反序列化用漏洞的普遍性和严重性。
 
-在Apache Commons Collections中有一个InvokerTransformer类实现了Transformer，主要作用是调用Java的反射机制\\(反射机制是在运行状态中，对于任意一个类，都能够知道这个类的所有属性和方法；对于任意一个对象，都能够调用它的任意一个方法和属性，详细内容请参考：\[[http://ifeve.com/java-reflection/\\)\]\(http://ifeve.com/java-reflection/\)](http://ifeve.com/java-reflection/\%29]%28http://ifeve.com/java-reflection/%29来调用任意函数，只需要传入方法名、参数类型和参数，即可调用任意函数。TransformedMap配合sun.reflect.annotation.AnnotationInvocationHandler中的readObject\%28\%29，可以触发漏洞。我们先来看一下大概的逻辑：)
+在Apache Commons Collections中有一个InvokerTransformer类实现了Transformer，主要作用是调用Java的反射机制\\(反射机制是在运行状态中，对于任意一个类，都能够知道这个类的所有属性和方法；对于任意一个对象，都能够调用它的任意一个方法和属性，详细内容请参考：\[[http://ifeve.com/java-reflection/\\)\]\(http://ifeve.com/java-reflection/\)](http://ifeve.com/java-reflection/%29]%28http://ifeve.com/java-reflection/%29来调用任意函数，只需要传入方法名、参数类型和参数，即可调用任意函数。TransformedMap配合sun.reflect.annotation.AnnotationInvocationHandler中的readObject%28%29，可以触发漏洞。我们先来看一下大概的逻辑：)
 
 来调用任意函数，只需要传入方法名、参数类型和参数，即可调用任意函数。TransformedMap配合sun.reflect.annotation.AnnotationInvocationHandler中的readObject\\(\\)，可以触发漏洞。我们先来看一下大概的逻辑：
 
@@ -230,7 +230,136 @@ AnnotationInvocationHandler的readObject\(\)函数中对memberValues的每一项
 
 ![](/assets/apache-java22.png)
 
-Server端接收到恶意请求后的处理流程：![](/assets/apache-common反序列化.jpg)
+Server端接收到恶意请求后的处理流程：![](/assets/apache-common反序列化.jpg)最终POP链执行过程
+
+```
+Gadget chain:
+        ObjectInputStream.readObject()
+            AnnotationInvocationHandler.readObject()
+                AbstractInputCheckedMapDecorator$MapEntry.setValue()
+                    TransformedMap.checkSetValue()
+                        ConstantTransformer.transform()
+                        InvokerTransformer.transform()
+                            Method.invoke()
+                                Class.getMethod()
+                        InvokerTransformer.transform()
+                            Method.invoke()
+                                Runtime.getRuntime()
+                        InvokerTransformer.transform()
+                            Method.invoke()
+                                Runtime.exec()
+```
+
+# **影响及修复**
+
+受影响的通用库和框架
+
+1. Spring Framework &lt;= 3.0.5，&lt;= 2.0.6；
+2. Groovy &lt; 2.4.4；
+3. Apache Commons Collections &lt;= 3.2.1，&lt;= 4.0.0；
+4. More to come ...
+
+漏洞的根源是对数据反序列化的时候没有检查对数据进行安全检查和未检测反序列化对象安全性造成的。所以修复方案如下：
+
+以下是两种比较常用的防范反序列化安全问题的方法：
+
+**1.类白名单校验**
+
+在ObjectInputStream 中resolveClass 里只是进行了class 是否能被load，自定义ObjectInputStream, 重载resolveClass的方法，对className 进行白名单校验
+
+```
+public final class test extends ObjectInputStream{
+    ...
+    protected Class<?>resolveClass(ObjectStreamClass desc)
+            throws IOException, ClassNotFoundException{
+         if(!desc.getName().equals("className")){
+            throw new ClassNotFoundException(desc.getName()+" forbidden!");
+        }
+        returnsuper.resolveClass(desc);
+    }
+      ...
+}
+
+```
+
+**2.禁止JVM执行外部命令Runtime.exec**
+
+通过扩展SecurityManager可以实现:
+
+```
+SecurityManager originalSecurityManager = System.getSecurityManager();
+        if (originalSecurityManager == null) {
+            // 创建自己的SecurityManager
+            SecurityManager sm = new SecurityManager() {
+                private void check(Permission perm) {
+                    // 禁止exec
+                    if (perm instanceof java.io.FilePermission) {
+                        String actions = perm.getActions();
+                        if (actions != null &&actions.contains("execute")) {
+                            throw new SecurityException("execute denied!");
+                        }
+                    }
+                    // 禁止设置新的SecurityManager，保护自己
+                    if (perm instanceof java.lang.RuntimePermission) {
+                        String name = perm.getName();
+                        if (name != null &&name.contains("setSecurityManager")) {
+                            throw new SecurityException("System.setSecurityManager denied!");
+                        }
+                    }
+                }
+                @Override
+                public void checkPermission(Permission perm) {
+                    check(perm);
+                }
+
+                @Override
+                public void checkPermission(Permission perm, Object context) {
+                    check(perm);
+                }
+            };
+            System.setSecurityManager(sm);
+        }
+```
+
+Java反序列化大多存在复杂系统间相互调用，控制，或较为底层的服务应用间交互等应用场景上，因此接口本身可能就存在一定的安全隐患。Java反序列化本身没有错，而是面对不安全的数据时，缺乏相应的防范，导致了一些安全问题。并且不容忽视的是，也许某些Java服务没有直接使用存在漏洞的Java库，但只要Lib中存在存在漏洞的Java库，依然可能会受到威胁。
+
+
+
+**3、更新更新Apache Commons Collections库**
+
+        Apache Commons Collections在3.2.2版本开始做了一定的安全处理，新版本的修复方案对相关反射调用进行了限制，对这些不安全的Java类的序列化支持增加了开关。
+
+
+
+# 总结
+
+漏洞分析
+
+　　引发：如果Java应用对用户输入，即不可信数据做了反序列化处理，那么攻击者可以通过构造恶意输入，让反序列化产生非预期的对象，非预期的对象在产生过程中就有可能带来任意代码执行。
+
+　　
+
+原因: 类ObjectInputStream在反序列化时，没有对生成的对象的输入做限制，使攻击者利用反射调用函数进行任意命令执行。
+
+　　　　　CommonsCollections组件中对于集合的操作存在可以进行反射调用的方法
+
+　　根源：Apache Commons Collections允许链式的任意的类函数反射调用
+
+　　　　　问题函数：org.apache.commons.collections.Transformer接口
+
+　　利用：要利用Java反序列化漏洞，需要在进行反序列化的地方传入攻击者的序列化代码。
+
+　　思路：攻击者通过允许Java序列化协议的端口，把序列化的攻击代码上传到服务器上，再由Apache Commons Collections里的TransformedMap来执行。
+
+　  至于如何使用这个漏洞对系统发起攻击，举一个简单的思路，通过本地java程序将一个带有后门漏洞的jsp（一般来说这个jsp里的代码会是文件上传和网页版的SHELL）序列化，
+
+将序列化后的二进制流发送给有这个漏洞的服务器，服务器会反序列化该数据的并生成一个webshell文件，然后就可以直接访问这个生成的webshell文件进行进一步利用。
+
+
+
+
+
+
 
 参考资料：
 
