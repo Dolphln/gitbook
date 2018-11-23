@@ -131,8 +131,6 @@ public class test3 {
 
 我们可以看到该方法的作用是：给定一个Object对象经过转换后也返回一个Object，该PoC中利用的是三个实现类：`ChainedTransformer`，`ConstantTransformer`，`InvokerTransformer`
 
-
-
 首先看InvokerTransformer类中的transform\(\)方法：  
 ![](/assets/apache-java7.png)
 
@@ -154,9 +152,89 @@ public class test3 {
 
 ![](/assets/apache-java11.png)
 
+这里使用了for循环来调用Transformer数组的transform\(\)方法，并且使用了object作为后一个调用transform\(\)方法的参数，结合PoC来看：
+
+```
+public static Object Reverse_Payload() throws Exception {
+        Transformer[] transformers = new Transformer[] {
+                new ConstantTransformer(Runtime.class),
+                new InvokerTransformer("getMethod", new Class[] { String.class, Class[].class }, new Object[] { "getRuntime", new Class[0] }),
+                new InvokerTransformer("invoke", new Class[] { Object.class, Object[].class }, new Object[] { null, new Object[0] }),
+                new InvokerTransformer("exec", new Class[] { String.class }, new Object[] { "open /Applications/Calculator.app" }) };
+
+```
+
+我们构造了一个Transformer数组transformers，第一个参数是“new ConstantTransformer\(Runtime.class\)”，后续均为InvokerTransformer对象，最后用该Transformer数组实例化了transformerChain对象，如果该对象触发了transform\(\)函数,那么transformers将在内一次展开触发各自的transform\(\)方法，由于InvokerTransformer类的特性，可以通过反射触发漏洞。下图是触发后debug截图：
+
+![](/assets/apache-java12.png)
+
+iTransformers\[0\]是ConstantTransformer对象，返回的就是Runtime.class类对象，再此处object也就被赋值为Runtime.class类对象，传入iTransformers\[2\].transform\(\)方法：
+
+![](/assets/apache-java13.png)  
+
+
+然后依次类推：
+
+![](/assets/apache-java14.png)
+
+最后：
+
+![](/assets/apache-java15.png)
+
+这里就会执行“open /Applications/Calculator.app”命令。
+
+但是我们无法直接利用此问题，但假设存在漏洞的服务器存在反序列化接口，我们可以通过反序列化来达到目的。
+
+可以看出，关键是需要构造包含命令的ChainedTransformer对象，然后需要触发ChainedTransformer对象的transform\(\)方法，即可实现目的。在TransformedMap中的checkSetValue\(\)方法中，我们发现：
+
+![](/assets/apache-java16.png)
+
+_**该方法会触发ChainedTransformer对象的transform\(\)方法**_，那么我们的思路就比较清晰了，我们可以首先构造一个Map和一个能够执行代码的ChainedTransformer，以此生成一个TransformedMap，然后想办法去触发Map中的MapEntry产生修改（例如setValue\(\)函数），即可触发我们构造的Transformer，因此也就有了PoC中的一下代码：
+
+```
+Map innermap = new HashMap();
+innermap.put("value", "value");
+Map outmap = TransformedMap.decorate(innermap, null, transformerChain);
+```
+
+```
+TransformedMap.decorate()方法是获得一个TransformedMap的实例
+
+TransformedMap.decorate方法,预期是对Map类的数据结构进行转化，该方法有三个参数。
+
+    第一个参数为待转化的Map对象
+    第二个参数为Map对象内的key要经过的转化方法（可为单个方法，也可为链，也可为空）
+    第三个参数为Map对象内的value要经过的转化方法
+```
+
+```
+TransformedMap.decorate(innermap, null, transformerChain);这个表明outmap这个Transformed对象要执行transformerChain的方法
+```
+
+这里的outmap是已经构造好的TransformedMap，现在我们的目的是需要能让服务器端反序列化某对象时，触发outmap的checkSetValue\(\)函数。
 
 
 
+这时类AnnotationInvocationHandler登场了，这个类有一个成员变量memberValues是Map类型，如下所示：  
+![](/assets/apache-java17.png)
+
+AnnotationInvocationHandler的readObject\(\)函数中对memberValues的每一项调用了setValue\(\)函数，如下所示：![](/assets/apache-java18.png)**因为setValue\(\)函数最终会触发checkSetValue\(\)函数：**
+
+![](/assets/apache-java-21.png)
+
+因此我们只需要使用前面构造的outmap来构造AnnotationInvocationHandler，进行序列化，当触发readObject\(\)反序列化的时候，就能实现命令执行：
+
+![](/assets/apache-java20.png)
+
+接下来就只需要序列化该对象：
+
+![](/assets/apache-java21.png)
+
+当反序列化该对象，触发readObject\(\)方法，就会导致命令执行：
+
+![](/assets/apache-java22.png)
+
+Server端接收到恶意请求后的处理流程：![](/assets/apache-common反序列化.jpg)
 
 参考资料：
 
