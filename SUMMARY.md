@@ -17,6 +17,7 @@
   * [青藤安全说（第一期）](qing-teng-an-quan-shuo-ff08-di-yi-qi-ff09.md)
   * [Commons Collections Java反序列化漏洞学习笔记](commons-collections-javafan-xu-lie-hua-lou-dong-xue-xi-bi-ji.md)
   * [WAF攻防研究之四个层次Bypass WAF](wafgong-fang-yan-jiu-zhi-si-ge-ceng-ci-bypass-waf.md)
+  * [从“黑掉GITHUB”学WEB安全开发](cong-201c-hei-diao-github-201d-xue-web-an-quan-kai-fa.md)
 * [大数据](#)
   * [TF-IDF算法](tf-idf算法.md)
 * [机器学习](机器学习.md)
@@ -35,7 +36,7 @@
   * [kippo蜜罐](运维安全/kippomi-guan.md)
   * [企业常见服务漏洞检测&修复整理](运维安全/qi-ye-chang-jian-fu-wu-lou-dong-jian-6d4b26-xiu-fu-zheng-li.md)
   * [蜜罐](运维安全/mi-guan.md)
-  * masscan使用
+  * [masscan使用](运维安全/masscanshi-yong.md)
 * [漏洞收集](lou-dong-shou-ji.md)
   * [漏洞预警 \| 微信支付SDK存在XXE漏洞](lou-dong-shou-ji/lou-dong-yu-jing-wei-xin-zhi-fu-sdk-cun-zai-xxe-lou-dong.md)
   * [漏洞预警 \| Struts 2 远程代码执行漏洞（S2-057 / CVE-2018-11776）](lou-dong-shou-ji/lou-dong-yujing-struts-2-yuan-cheng-dai-ma-zhi-xing-lou-dong-ff08-s2-057-cve-2018-11776.md)
