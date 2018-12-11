@@ -1,3 +1,5 @@
+# 漏洞预警 \| 微信支付SDK存在XXE漏洞
+
 漏洞信息来源：  
 [http://seclists.org/fulldisclosure/2018/Jul/3](http://seclists.org/fulldisclosure/2018/Jul/3)
 
@@ -6,11 +8,11 @@
 
 微信在JAVA版本的SDK中提供callback回调功能，用来帮助商家接收异步付款结果，该接口接受XML格式的数据，攻击者可以构造恶意的回调数据（XML格式）来窃取商家服务器上的任何信息。一旦攻击者获得了关键支付的安全密钥（md5-key和商家信息，将可以直接实现0元支付购买任何商品）
 
-### 漏洞详情 {#toc-0}
+### 漏洞详情 <a id="toc-0"></a>
 
-The SDK  in this page:  [https://pay.weixin.qq.com/wiki/doc/api/jsapi.php](https://pay.weixin.qq.com/wiki/doc/api/jsapi.php)
+The SDK in this page: [https://pay.weixin.qq.com/wiki/doc/api/jsapi.php](https://pay.weixin.qq.com/wiki/doc/api/jsapi.php)
 
-```
+```text
 chapter=11_1
    Just in java vision:
 https://pay.weixin.qq.com/wiki/doc/api/download/WxPayAPI_JAVA_v3.zip
@@ -81,13 +83,13 @@ documentBuilderFactory.newDocumentBuilder();
 ]
 ```
 
-### 利用细节 {#toc-1}
+### 利用细节 <a id="toc-1"></a>
 
-```
+```text
 Post merchant notification url with  payload:
 ```
 
-```
+```text
 <?xml version="1.0" encoding="utf-8"?>
 <
 !DOCTYPE root [  
@@ -127,7 +129,5 @@ In order to prove this, I got 2 chinese famous company:
    b、vivo ：China's famous mobile phone,that also famous in my country
 ```
 
-## [微信支付SDK漏洞排查修复札记](https://mp.weixin.qq.com/s/IMlqJjltFiPlCjj7P_65Ww) {#activity-name}
-
-
+## [微信支付SDK漏洞排查修复札记](https://mp.weixin.qq.com/s/IMlqJjltFiPlCjj7P_65Ww) <a id="activity-name"></a>
 
