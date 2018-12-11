@@ -34,6 +34,8 @@
   * [在OpenVPN上启用AD+google authenicator认证](运维安全/zai-openvpn-shang-qi-yong-ad-+-google-authenicator-ren-zheng.md)
   * [kippo蜜罐](运维安全/kippomi-guan.md)
   * [企业常见服务漏洞检测&修复整理](运维安全/qi-ye-chang-jian-fu-wu-lou-dong-jian-6d4b26-xiu-fu-zheng-li.md)
+  * [蜜罐](运维安全/mi-guan.md)
+  * masscan使用
 * [漏洞收集](lou-dong-shou-ji.md)
   * [漏洞预警 \| 微信支付SDK存在XXE漏洞](lou-dong-shou-ji/lou-dong-yu-jing-wei-xin-zhi-fu-sdk-cun-zai-xxe-lou-dong.md)
   * [漏洞预警 \| Struts 2 远程代码执行漏洞（S2-057 / CVE-2018-11776）](lou-dong-shou-ji/lou-dong-yujing-struts-2-yuan-cheng-dai-ma-zhi-xing-lou-dong-ff08-s2-057-cve-2018-11776.md)
