@@ -1,10 +1,10 @@
 ## 安装
 
 ```
-$ sudo apt-get install clang git gcc make libpcap-dev
-$ git clone https://github.com/robertdavidgraham/masscan
-$ cd masscan
-$ make
+$ sudo apt-get install clang git gcc make libpcap-dev
+$ git clone https://github.com/robertdavidgraham/masscan
+$ cd masscan
+$ make
 ```
 
 ## 使用
@@ -70,20 +70,18 @@ masscan.exe -p80,443,3306 192.168.81.143 --banners --echo>1.conf
 读取配置信息1.conf，启动扫描:
 
 ```
-masscan.exe -c 1.conf
+masscan.exe -c 1.conf
 ```
 
 补充，默认情况，masscan开启如下配置：
 
 ```
--sS: this does SYN scan only (currently, will change in the future) 
--Pn: doesn't ping hosts first, which is fundamental to the async operation 
--n: no DNS resolution happens 
---randomize-hosts: scan completely randomized 
---send-eth: sends using raw libpcap
+-sS: this does SYN scan only (currently, will change in the future) 
+-Pn: doesn't ping hosts first, which is fundamental to the async operation 
+-n: no DNS resolution happens 
+--randomize-hosts: scan completely randomized 
+--send-eth: sends using raw libpcap
 ```
-
-
 
 **详细参数**
 
