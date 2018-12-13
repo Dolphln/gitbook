@@ -45,7 +45,9 @@ BAD: http://oauth.example.com:8080/path
 BAD: http://example.org
 ```
 
-而Github对于redirect\_uri做了限制，要求只能跳回到 [https://gist.github.com/auth/github/callback/，也就是说，域名是gist.github.com，目录是/auth/github/callback/，服务器端做了这个限制，看似很安全了。](https://gist.github.com/auth/github/callback/，也就是说，域名是gist.github.com，目录是/auth/github/callback/，服务器端做了这个限制，看似很安全了。)
+而Github对于redirect\_uri做了限制，要求只能跳回到 [https://gist.github.com/auth/github/callback/](https://gist.github.com/auth/github/callback/)，
+
+也就是说，域名是gist.github.com，目录是/auth/github/callback/，服务器端做了这个限制，看似很安全了。
 
 但是，Egor发现，Github的服务器端并没有验证.. /../../这样的情况。
 
@@ -107,7 +109,9 @@ https://gist.github.com/homakov/8820324?code=CODE
 
 * 对于相对路径：就没有绝对路径那么复杂了。就是些 .. 和 /再加上?和一些参数。
 
-好了，如果coolshell.cn网页中的&lt;img src=&gt;或&lt;a href=&gt;中用到的相对路径是 /host.com，那么浏览器会解释成：[https://coolshell.cn/host.com，如果是///host.com，那么就应该被浏览器解释成](https://coolshell.cn/host.com，如果是///host.com，那么就应该被浏览器解释成) [https://coolshell.cn///host.com。](https://coolshell.cn///host.com。)
+好了，如果coolshell.cn网页中的&lt;img src=&gt;或&lt;a href=&gt;中用到的相对路径是 /host.com，那么浏览器会解释成：
+
+`https://coolshell.cn/host.com，如果是///host.com，那么就应该被浏览器解释成 https://coolshell.cn///host.com。`
 
 但是，Chrome和Firefox，会把///host.com当成绝对路径，因为其正确匹配了绝对路径的scheme。如果你正在用Chrome/Firefox看这篇文章 ，你可以看看下面的连接（源码如下）：
 
