@@ -376,7 +376,7 @@ XXE漏洞以及Blind XXE总结 [https://blog.csdn.net/u011721501/article/details
 
 [XXE漏洞攻防之我见](https://www.anquanke.com/post/id/86075)
 
-[神奇的Content-Type——在JSON中玩转XXE攻击](http://bobao.360.cn/learning/detail/360.html)
+[神奇的Content-Type——在JSON中玩转XXE攻击](https://www.cnblogs.com/blacksunny/p/7891495.html)
 
 DTD/XXE 攻击笔记分享 [http://www.freebuf.com/articles/web/97833.html](http://www.freebuf.com/articles/web/97833.html)
 
