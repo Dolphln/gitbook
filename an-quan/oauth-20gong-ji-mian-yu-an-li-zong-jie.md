@@ -28,6 +28,8 @@ state
 
 ## ![](/assets/oauth-3.png)
 
+## 
+
 ## 攻击面
 
 ```
@@ -138,15 +140,15 @@ evil.com:\@auth.app.com 案例:新浪微博OAuth平台redirect_uri过滤不严�
 
 2\) 不要访问不明来路的链接，正常的应用授权应该是通过页面中的登陆按钮等方式进行的。
 
-
-
 ### 漏洞的多种利用方式
 
 #### 漏洞利用
 
-        部分OAuth 2.0提供未对回调URL进行校验甚至校验可以被绕过的情况下，黑客可以通过构造钓鱼页面，用户在访问了黑客构造的页面之后，可以被获取OAuth授权中最终返回的token，通过token可以实现登陆该用户的第三方应用或者是调用OAuth提供的API进行相关操作，包括获取在OAuth提供方注册的相关资料等。
+```
+    部分OAuth 2.0提供未对回调URL进行校验甚至校验可以被绕过的情况下，黑客可以通过构造钓鱼页面，用户在访问了黑客构造的页面之后，可以被获取OAuth授权中最终返回的token，通过token可以实现登陆该用户的第三方应用或者是调用OAuth提供的API进行相关操作，包括获取在OAuth提供方注册的相关资料等。
+```
 
-#####  1、**回调URL未校验**
+##### 1、**回调URL未校验**
 
 如果回调URL没有进行校验，则黑客可以直接修改回调的URL为指定的任意URL，即可以实现跳转甚至是XSS。
 
@@ -157,8 +159,6 @@ http://passport.xxxx.cn/oauth2/authorize?response_type=code&redirect_uri=http://
 ```
 
 ![](/assets/oauth-4.png)
-
-
 
 ##### 2、**回调校验绕过**
 
@@ -186,8 +186,6 @@ https://api.xxx.com/oauth2/authorize?client_id=204649&response_type=token&redire
 
 ![](/assets/oauth-6.png)
 
-
-
 ##### 4、**授权验证参数的不正确使用**
 
 部分第三方应用在授权过程中采用如state里包含access token接收的回调URL，但是因为OAuth提供方只对回调URL，即参数redirect\_uri的值进行校验，就可以导致黑客可以随意构造回调的URL，就导致问题的出现。
@@ -205,6 +203,18 @@ https://api.xxx.com/oauth2/authorize?client_id=204649&response_type=token&redire
 其中www.a.com为钓鱼或者接收token的页面，www.b.com为实际回调的URL
 
 
+
+参考：
+
+[针对近期“博全球眼球的OAuth漏洞”的分析与防范建议](https://www.freebuf.com/vuls/33750.html)
+
+[案例分析：利用OAuth实施钓鱼](https://www.freebuf.com/articles/web/119615.html)
+
+[OAuth 2.0攻击面与案例总结](https://www.freebuf.com/articles/web/110757.html)
+
+[OAuth认证机制中普遍的安全问题](https://www.freebuf.com/articles/web/5997.html)
+
+[理解OAuth 2.0](http://www.ruanyifeng.com/blog/2014/05/oauth_2_0.html)
 
 
 
