@@ -241,7 +241,7 @@ stdout{
 
 ![](../.gitbook/assets/mysql-proxy-es1.png)![](../.gitbook/assets/mysql-proxy-es2.png)
 
-## 六、后续补充
+## 六、mysql-router
 
 也可使用mysql-router，这是mysql-proxy的一个升级版，相对来说mysql-router的配置更简单一些
 
@@ -249,9 +249,37 @@ stdout{
 
 [https://www.cnblogs.com/zengkefu/p/5499706.html](https://www.cnblogs.com/zengkefu/p/5499706.html)
 
-mysql-proxy如果代理很多的数据库经常会有一些代理掉线，需要配置脚本进行监控重启。
+配置示例
 
-mysql-router的效果还不太清楚，静待观察。
+```
+[DEFAULT]
+logging_folder = /usr/local/mysql-router/log/
+plugin_folder = /usr/local/mysql-router/lib/mysqlrouter/
+runtime_folder = /usr/local/mysql-router/run/
+config_folder = /usr/local/mysql-router/etc/
 
-抓取mysql-router的数据包抓不到当前连接用户的包，但能够抓到连接的ip
+[logger]
+level = DEBUG
+
+[routing:testdb]
+bind_address=0.0.0.0
+bind_port = 4042
+connect_timeout = 10
+max_connections = 256
+max_connect_errors = 1000
+destinations = 127.0.0.1:3306
+mode = read-only
+ssl_mode=disabled     #需要设置这个,不然客户端使用ssl的方式进行连接，导致packetbeat抓不到包
+
+[keepalive]
+interval = 60
+```
+
+1、mysql-proxy如果代理很多的数据库经常会有一些代理掉线，需要配置脚本进行监控重启。
+
+2、抓取mysql-router的数据包抓不到当前连接用户的包，但能够抓到连接的ip
+
+mysql-router的官方文档：
+
+[https://dev.mysql.com/doc/mysql-router/8.0/en/](https://dev.mysql.com/doc/mysql-router/8.0/en/)
 
