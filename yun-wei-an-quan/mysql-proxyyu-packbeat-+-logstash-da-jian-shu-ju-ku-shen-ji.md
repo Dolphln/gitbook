@@ -1,4 +1,4 @@
-# mysql-proxy与packbeat+logstash搭建数据库审计
+# 使用packbeat搭建数据库审计
 
 ## 一、介绍
 
