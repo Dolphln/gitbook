@@ -23,6 +23,7 @@
   * [TF-IDF算法](da-shu-ju/tfidf-suan-fa.md)
 * [机器学习](ji-qi-xue-xi/README.md)
   * [机器学习主要术语](ji-qi-xue-xi/ji-qi-xue-xi-zhu-yao-zhu-yu.md)
+  * [支持向量机SVM](ji-qi-xue-xi/zhi-chi-xiang-liang-ji-svm.md)
 * [运维安全](yun-wei-an-quan/README.md)
   * [nginx+lua实现简单的waf网页防火墙功能](yun-wei-an-quan/nginx+lua-shi-xian-jian-dan-de-waf-wang-ye-fang-huo-qiang-gong-neng.md)
   * [堡垒机](yun-wei-an-quan/bao-lei-ji.md)
