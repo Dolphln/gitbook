@@ -39,6 +39,7 @@
   * [企业常见服务漏洞检测&修复整理](yun-wei-an-quan/qi-ye-chang-jian-fu-wu-lou-dong-jian-6d4b26-xiu-fu-zheng-li.md)
   * [蜜罐](yun-wei-an-quan/mi-guan.md)
   * [masscan使用](yun-wei-an-quan/masscanshi-yong.md)
+  * [保障IDC安全：分布式HIDS集群架构设计](yun-wei-an-quan/bao-zhang-idc-an-quan-ff1a-fen-bu-shi-hids-ji-qun-jia-gou-she-ji.md)
 * [漏洞收集](lou-dong-shou-ji/README.md)
   * [漏洞预警 \| 微信支付SDK存在XXE漏洞](lou-dong-shou-ji/lou-dong-yu-jing-wei-xin-zhi-fu-sdk-cun-zai-xxe-lou-dong.md)
   * [漏洞预警 \| Struts 2 远程代码执行漏洞（S2-057 / CVE-2018-11776）](lou-dong-shou-ji/lou-dong-yujing-struts-2-yuan-cheng-dai-ma-zhi-xing-lou-dong-ff08-s2-057-cve-2018-11776.md)
