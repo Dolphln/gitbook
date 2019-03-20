@@ -1,4 +1,4 @@
-# 编写ossec decode
+# 编写ossec decode/ossec-logtest
 
 OSSEC 之所以产生报警，就是由于抓到了信息后由DECODE对信息进行解码，然后匹配规则（rule）进行相关告警产生ALERTID
 
@@ -46,4 +46,14 @@ OSSEC 之所以产生报警，就是由于抓到了信息后由DECODE对信息�
 ![](../.gitbook/assets/ossec_decode1.png)
 
 可以使用这种方式编写自己的规则。
+
+
+
+ossec-logtest可以使用以下命令查看自己编写的decoder有没有成功匹配到，用于测试
+
+```
+cat /var/log/secure| /var/ossec/bin/ossec-logtest -a
+```
+
+
 
