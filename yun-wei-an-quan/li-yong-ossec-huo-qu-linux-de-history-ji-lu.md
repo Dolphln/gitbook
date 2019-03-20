@@ -12,8 +12,6 @@ export PROMPT_COMMAND='history 1|tail -1|sed "s/^[ ]\+[0-9]\+  //"|sed "s/$/\"/"
 
 source /etc/bashrc  使生效，或者重新登录都能让其生效
 
-
-
 agent的配置文件/var/ossec/etc/ossec.conf，添加配置项
 
 ```
@@ -25,15 +23,11 @@ agent的配置文件/var/ossec/etc/ossec.conf，添加配置项
 
 /var/ossec/bin/ossec-control restart    重启ossec agent
 
-
-
 日志格式如下：
 
 ```
 shell_history 2019-03-20 15:58:33 centos6.5 10.100.1.10 root root /root "cat /var/log/command.log "
 ```
-
-
 
 需要在ossec服务端添加decoder
 
@@ -56,7 +50,5 @@ shell_history 2019-03-20 15:58:33 centos6.5 10.100.1.10 root root /root "cat /va
 </group>
 ```
 
-最后效果
-
-![](/assets/ossec_shell_command.png)
+最后效果![](/assets/shell-command-history.png)
 
