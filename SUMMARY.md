@@ -40,6 +40,7 @@
   * [蜜罐](yun-wei-an-quan/mi-guan.md)
   * [masscan使用](yun-wei-an-quan/masscanshi-yong.md)
   * [保障IDC安全：分布式HIDS集群架构设计](yun-wei-an-quan/bao-zhang-idc-an-quan-ff1a-fen-bu-shi-hids-ji-qun-jia-gou-she-ji.md)
+  * [利用ossec获取linux的history记录](yun-wei-an-quan/li-yong-ossec-huo-qu-linux-de-history-ji-lu.md)
 * [漏洞收集](lou-dong-shou-ji/README.md)
   * [漏洞预警 \| 微信支付SDK存在XXE漏洞](lou-dong-shou-ji/lou-dong-yu-jing-wei-xin-zhi-fu-sdk-cun-zai-xxe-lou-dong.md)
   * [漏洞预警 \| Struts 2 远程代码执行漏洞（S2-057 / CVE-2018-11776）](lou-dong-shou-ji/lou-dong-yujing-struts-2-yuan-cheng-dai-ma-zhi-xing-lou-dong-ff08-s2-057-cve-2018-11776.md)
