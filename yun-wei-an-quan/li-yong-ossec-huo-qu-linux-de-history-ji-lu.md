@@ -50,5 +50,7 @@ shell_history 2019-03-20 15:58:33 centos6.5 10.100.1.10 root root /root "cat /va
 </group>
 ```
 
-最后效果![](/assets/shell-command-history.png)
+最后效果   
+
+![](/assets/shell-command-history.png)
 
