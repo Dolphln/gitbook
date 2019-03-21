@@ -23,7 +23,9 @@ agent的配置文件/var/ossec/etc/ossec.conf，添加配置项
 
 /var/ossec/bin/ossec-control restart    重启ossec agent
 
-日志格式如下：
+日志格式如下（类似syslog的日志格式）：
+
+ossec的localfile只支持syslog、snort-full、snort-fast、squid、iis、eventlog、eventchannel、mysql\_log等等格式，具体查看https://www.ossec.net/docs/syntax/head\_ossec\_config.localfile.html
 
 ```
 shell_history 2019-03-20 15:58:33 centos6.5 10.100.1.10 root root /root "cat /var/log/command.log "
@@ -50,7 +52,7 @@ shell_history 2019-03-20 15:58:33 centos6.5 10.100.1.10 root root /root "cat /va
 </group>
 ```
 
-最后效果   
+最后效果
 
 ![](/assets/shell-command-history.png)
 
