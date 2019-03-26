@@ -109,7 +109,6 @@ config set dbfilename authorized_keys
 
 ```
 ssh root@10.100.50.75
-
 ```
 
 ---
