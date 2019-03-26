@@ -109,9 +109,12 @@ config set dbfilename authorized_keys
 
 ```
 ssh root@10.100.50.75
+
 ```
 
 ---
+
+#### 
 
 #### 其他利用方式1：在crontab里写定时任务，反弹shell
 
