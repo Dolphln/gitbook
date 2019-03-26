@@ -99,7 +99,11 @@ config set dbfilename authorized_keys
 
 ![](/assets/redis-7.png)
 
-写入成功![](/assets/redis-8.png)在attackA上使用ssh登录serverB，登录成功
+写入成功
+
+![](/assets/redis-8.png)
+
+在attackA上使用ssh登录serverB，登录成功
 
 ![](/assets/redis-9.png)
 
@@ -169,8 +173,6 @@ return msg
 ```
 
 ![](/assets/redis-12.png)
-
-
 
 ---
 
