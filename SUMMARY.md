@@ -19,6 +19,7 @@
   * [WAF攻防研究之四个层次Bypass WAF](an-quan/wafgong-fang-yan-jiu-zhi-si-ge-ceng-ci-bypass-waf.md)
   * [从“黑掉GITHUB”学WEB安全开发](an-quan/cong-201c-hei-diao-github-201d-xue-web-an-quan-kai-fa.md)
   * [OAuth 2.0攻击面与案例总结](an-quan/oauth-20gong-ji-mian-yu-an-li-zong-jie.md)
+  * [参数化查询防止sql注入](an-quan/can-shu-hua-cha-xun-fang-zhi-sql-zhu-ru.md)
 * [大数据](da-shu-ju/README.md)
   * [TF-IDF算法](da-shu-ju/tfidf-suan-fa.md)
 * [机器学习](ji-qi-xue-xi/README.md)
