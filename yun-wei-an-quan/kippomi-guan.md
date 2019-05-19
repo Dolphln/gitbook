@@ -35,12 +35,12 @@ twisted也许安装不了，可以在官网下载安装
 ```text
 mv kippo-master kippo
 useradd kippo
-chown -R kippo:kippo
+chown -R kippo:kippo /home/kippo
 cd kippo
 cp kippo.cfg.dist kippo.cfg
 ```
 
-因为普通账户无法启动1024以下的端口。首先修改一下本机SSH的端口为10086（随意，这是真正的ssh端口）。kippo会监听本地的2222端口，加一条防火墙规则,把22端口转到2222。使用iptables转发，
+因为普通账户无法启动1024以下的端口。首先修改一下本机SSH的端口为10086（随意，这是真正的ssh端口）。kippo会监听本地的2222端口，加一条防火墙规则,把22端口转到2222（可以改为8080，8090端口）。使用iptables转发，
 
 ```text
 iptables -t nat -A PREROUTING -p tcp --dport 22 -j REDIRECT --to-ports 2222
