@@ -52,7 +52,6 @@ iptables设置：
 iptables -F   清空iptables设置（慎用）
 iptables -t nat -A PREROUTING -p tcp --dport 22 -j REDIRECT --to-ports 2222 添加转发记录
 iptables -L -t nat   查看转发规则
-iptables -A INPUT -p tcp --dport 2222 -j DROP   然后屏蔽2222端口
 ```
 
 ![](../.gitbook/assets/kippo-nat.png)
