@@ -52,4 +52,6 @@
   * [未授权访问的tips](lou-dong-shou-ji/wei-shou-quan-fang-wen-de-tips.md)
 * [办公安全](ban-gong-an-quan.md)
   * [伪造电子邮件以及制造电子邮件炸弹的攻防探讨](ban-gong-an-quan/wei-zao-dian-zi-you-jian-yi-ji-zhi-zao-dian-zi-you-jian-zha-dan-de-gong-fang-tan-tao.md)
+* [安全开发](an-quan-kai-fa.md)
+  * [sqlmap-tamper编写](an-quan-kai-fa/sqlmap-tamperbian-xie-zhi-nan.md)
 
