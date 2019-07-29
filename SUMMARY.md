@@ -21,6 +21,7 @@
   * [OAuth 2.0攻击面与案例总结](an-quan/oauth-20gong-ji-mian-yu-an-li-zong-jie.md)
   * [参数化查询防止sql注入](an-quan/can-shu-hua-cha-xun-fang-zhi-sql-zhu-ru.md)
   * [8大前端安全问题](an-quan/8da-qian-duan-an-quan-wen-ti.md)
+  * [安全架构评审实战](an-quan/an-quan-jia-gou-ping-shen-shi-zhan.md)
 * [大数据](da-shu-ju/README.md)
   * [TF-IDF算法](da-shu-ju/tfidf-suan-fa.md)
 * [机器学习](ji-qi-xue-xi/README.md)
