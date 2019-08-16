@@ -1,6 +1,6 @@
 ESAPI是owasp提供的一套API级别的web应用解决方案。简单的说，ESAPI就是为了编写出更加安全的代码而设计出来的一些API，方便使用者调用，从而方便的编写安全的代码
 
-其官方网站为：https://www.owasp.org/，其有很多针对不同语言的版本，其J2ee的版本需要jre1.5及以上支持
+其官方网站为：[https://www.owasp.org/，其有很多针对不同语言的版本，其J2ee的版本需要jre1.5及以上支持](https://www.owasp.org/，其有很多针对不同语言的版本，其J2ee的版本需要jre1.5及以上支持)
 
 相关api介绍：
 
@@ -21,8 +21,6 @@ ESAPI是owasp提供的一套API级别的web应用解决方案。简单的说，E
     <version>2.1.0.1</version>
 </dependency>
 ```
-
-
 
 #### 第二步：加入配置文件
 
@@ -182,7 +180,6 @@ ESAPI是owasp提供的一套API级别的web应用解决方案。简单的说，E
     # See DataFormat.setLenient(boolean flag) for further details.
     Validator.AcceptLenientDates=false
 
-
 ##### validation.properties
 
 ```
@@ -230,15 +227,84 @@ http%3A%2F%2Fwww.baidu.com%2F%3Fid%3Da%26%26age%3D11
 
 ##### 针对xss漏洞 {#针对xss漏洞}
 
+```
+//对用户输入“input”进行HTML编码，防止XSS
+input = ESAPI.encoder().encodeForHTML(input);
+//根据自己不同的需要可以选用以下方法
+//input = ESAPI.encoder().encodeForHTMLAttribute(input);
+//input = ESAPI.encoder().encodeForJavaScript(input);
+//input = ESAPI.encoder().encodeForCSS(input);
+//input = ESAPI.encoder().encodeForURL(input);
+```
+
+##### 针对sql注入漏洞 {#针对sql注入漏洞}
+
+除了支持mysql还支持oracle
+
+```
+String input1="用户输入1";
+String input2="用户输入2";
+
+//解决注入问题
+input1 = ESAPI.encoder().encodeForSQL(new MySQLCodec(MySQLCodec.Mode.STANDARD),input1);
+input2 = ESAPI.encoder().encodeForSQL(new MySQLCodec(MySQLCodec.Mode.STANDARD),input2);
+
+String sqlStr="select name from tableA where id="+input1 +"and date_created ='" + input2+"'";
+
+//执行SQL
+```
+
+##### 验证输入 {#验证输入}
+
+检查每个输入的有效性，让每个输入合法。这里面的关键是一切都进行验证。ESAPI提供了很多常见的校验，可以方便针对不同的需要做校验。
+
+```
+//type就是定义在validate.properties文件中的正则表达式
+//ESAPI.validator().getValidInput(java.lang.String context,java.lang.String input, java.lang.String type,int maxLength,boolean allowNull);
+
+//ESAPI.validator().isValidInput(java.lang.String context,java.lang.String input, java.lang.String type,int maxLength,boolean allowNull);
+
+//实际使用参考如下：
+String input="xxxx.com";
+
+        if(!ESAPI.validator().isValidInput("",input,"Email",11,false)){
+            System.out.println("出错了");
+        }
+
+        try{
+
+            input = ESAPI.validator().getValidInput("",input,"Email",11,false);
+        }catch (Exception e){
+            System.out.println("输入错误");
+            e.printStackTrace();
+        }
+
+```
+
+##### 验证恶意文件 {#验证恶意文件}
+
+```
+//校验文件名
+String inputfilename ="xxxx.txt";
+ArrayList<String> allowedExtension = new ArrayList<String>();
+allowedExtension.add("exe");
+allowedExtension.add("jpg");
+
+if(!ESAPI.validator().isValidFileName("upload",inputfilename, allowedExtension,false)){
+   //文件名不合法,throw exception
+   System.out.println("出错了");
+}
+
+//获取随机文件名
+System.out.println(ESAPI.randomizer().getRandomFilename("exe"));
+//得到结果rnQO8AK4ymmv.exe
+```
 
 
 
-
-
-
---------------------- 
+---
 
 版权声明：本文为CSDN博主「frog4」的原创文章，遵循CC 4.0 by-sa版权协议，转载请附上原文出处链接及本声明。
 
-原文链接：https://blog.csdn.net/frog4/article/details/81876462
+原文链接：[https://blog.csdn.net/frog4/article/details/81876462](https://blog.csdn.net/frog4/article/details/81876462)
 
