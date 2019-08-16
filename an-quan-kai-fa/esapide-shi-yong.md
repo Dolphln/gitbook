@@ -1,12 +1,31 @@
 ESAPI是owasp提供的一套API级别的web应用解决方案。简单的说，ESAPI就是为了编写出更加安全的代码而设计出来的一些API，方便使用者调用，从而方便的编写安全的代码
 
+owasp top 10所对应的API接口
+
+| owasp top 10 | owasp esapi |
+| :--- | :--- |
+| A1. Cross Site Scripting \(xss\) | Validator,    Encoder |
+| A2. Injection Flaws  | Encoder |
+| A3. Malicious  File Execution | HTTPUtilities \(safe upload\) |
+| A4. Insecure Direct Object Reference | AccessReferenceMap,  AccessController |
+| A5. Cross Site Request Forgercy \(CSRF\) | User \(CSRF Token\) |
+| A6. Leakage and Improper Error Handling | EnterpriseSecurityException , HTTPUtils |
+| A7. Broken Authentication and Sessions | Authenticator, User , HTTPUtils |
+| A8. Insecure Cryptographic Storage | Encryptor |
+| A9. Insecure Communications | HTTPUtilities \(Secure Cookie ,Channel\) |
+| A10. Failure to Restrict URL Access  | AccessController |
+
+
+
 其官方网站为：[https://www.owasp.org/，其有很多针对不同语言的版本，其J2ee的版本需要jre1.5及以上支持](https://www.owasp.org/，其有很多针对不同语言的版本，其J2ee的版本需要jre1.5及以上支持)
 
 相关api介绍：
 
 [https://www.javadoc.io/doc/org.owasp.esapi/esapi/2.1.0](https://www.javadoc.io/doc/org.owasp.esapi/esapi/2.1.0)
 
-####  {#安装篇}
+
+
+
 
 #### 安装篇 {#安装篇}
 
@@ -298,6 +317,8 @@ if(!ESAPI.validator().isValidFileName("upload",inputfilename, allowedExtension,f
 System.out.println(ESAPI.randomizer().getRandomFilename("exe"));
 //得到结果rnQO8AK4ymmv.exe
 ```
+
+
 
 
 
