@@ -278,7 +278,6 @@ String input="xxxx.com";
             System.out.println("输入错误");
             e.printStackTrace();
         }
-
 ```
 
 ##### 验证恶意文件 {#验证恶意文件}
@@ -302,9 +301,5 @@ System.out.println(ESAPI.randomizer().getRandomFilename("exe"));
 
 
 
----
 
-版权声明：本文为CSDN博主「frog4」的原创文章，遵循CC 4.0 by-sa版权协议，转载请附上原文出处链接及本声明。
-
-原文链接：[https://blog.csdn.net/frog4/article/details/81876462](https://blog.csdn.net/frog4/article/details/81876462)
 
