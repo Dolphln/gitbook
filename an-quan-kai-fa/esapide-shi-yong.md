@@ -5,7 +5,7 @@ owasp top 10所对应的API接口
 | owasp top 10 | owasp esapi |
 | :--- | :--- |
 | A1. Cross Site Scripting \(xss\) | Validator,    Encoder |
-| A2. Injection Flaws  | Encoder |
+| A2. Injection Flaws | Encoder |
 | A3. Malicious  File Execution | HTTPUtilities \(safe upload\) |
 | A4. Insecure Direct Object Reference | AccessReferenceMap,  AccessController |
 | A5. Cross Site Request Forgercy \(CSRF\) | User \(CSRF Token\) |
@@ -13,9 +13,7 @@ owasp top 10所对应的API接口
 | A7. Broken Authentication and Sessions | Authenticator, User , HTTPUtils |
 | A8. Insecure Cryptographic Storage | Encryptor |
 | A9. Insecure Communications | HTTPUtilities \(Secure Cookie ,Channel\) |
-| A10. Failure to Restrict URL Access  | AccessController |
-
-
+| A10. Failure to Restrict URL Access | AccessController |
 
 其官方网站为：[https://www.owasp.org/，其有很多针对不同语言的版本，其J2ee的版本需要jre1.5及以上支持](https://www.owasp.org/，其有很多针对不同语言的版本，其J2ee的版本需要jre1.5及以上支持)
 
@@ -23,11 +21,7 @@ owasp top 10所对应的API接口
 
 [https://www.javadoc.io/doc/org.owasp.esapi/esapi/2.1.0](https://www.javadoc.io/doc/org.owasp.esapi/esapi/2.1.0)
 
-
-
-
-
-#### 安装篇 {#安装篇}
+### 安装篇
 
 #### 第一步：引入Jar
 
@@ -210,7 +204,9 @@ Validator.URL=^(ht|f)tp(s?)\\:\\/\\/[0-9a-zA-Z]([-.\\w]*[0-9a-zA-Z])*(:(0-9)*)*(
 Validator.CreditCard=^(\\d{4}[- ]?){3}\\d{4}$
 ```
 
-##### 第三步：测试 {#第三步测试}
+#### 
+
+#### 第三步：测试
 
 增加测试类：
 
@@ -242,9 +238,11 @@ http%3A%2F%2Fwww.baidu.com%2F%3Fid%3Da%26%26age%3D11
 \' or \'1\'\=\'1
 ```
 
-#### 使用篇 {#使用篇}
+####  {#使用篇}
 
-##### 针对xss漏洞 {#针对xss漏洞}
+### 使用篇
+
+#### 1、针对xss漏洞
 
 ```
 //对用户输入“input”进行HTML编码，防止XSS
@@ -256,7 +254,74 @@ input = ESAPI.encoder().encodeForHTML(input);
 //input = ESAPI.encoder().encodeForURL(input);
 ```
 
-##### 针对sql注入漏洞 {#针对sql注入漏洞}
+ESAPI提供了两个相关接口 Encode、Validator。
+
+Encode接口
+
+Encode（编码器接口）包含了许多解码输入和编码输出的方法，这样处理过的字符对于各种解释器都是安全的。
+
+ESAPI根据XSS问题的特征和产生的原因，提供了不同的接口，下面我们介绍各个编码器的使用和原理。
+
+Encode接口针对XSS的预发是在输出编码上，根据你要输出到不同地方转换成不同的编码。不同地方有HTML、Javascript、URL、CSS等。
+
+（需了解3种编码格式：URL编码、HTML编码、JavaScript编码）其思想是对特殊意义的字符必须进行编码，编码后不影响原来结构体。
+
+![](/assets/esapi-1.png)
+
+列举ESAPI针对XSS漏洞的7个预防方法：
+
+##### **\(1\).调用HTML编码器**
+
+Code:
+
+```
+System.out.println(ESAPI.encoder().encodeForHTML("<script>alert(/xss/)</script>"));
+System.out.println(ESAPI.encoder().encodeForHTML("data 12"));
+```
+
+输出
+
+![](/assets/esapi-2.png)
+
+**总结：**
+
+这个编码器使用的是HTMLEntityCodec，编译原理是，如果是空格、字母或者数字就不进行编码；如果有特殊字符在HTML中有匹配的替代字符，就使用替代字符。
+
+**应用场景：**
+
+有需要输出用户输入的字符串、表单提交后的数据需要展示的场景都可以运用。下面用留言板作为案例。
+
+**Code:**
+
+从数据库中得到数据，解析展示到用户浏览器界面。
+
+这样即使用户输入了html标签，在返回到浏览器的时候也得不到执行。因为已经转换成html编码了。
+
+
+
+##### **（2）调用HTML属性编码器**
+
+code:
+
+```
+System.out.println(ESAPI.encoder().encodeForHTMLAttribute("<script>alert(/xss/)</script>"));
+
+System.out.println(ESAPI.encoder().encodeForHTMLAttribute("data 12"));
+```
+
+![](/assets/esapi-3.png)
+
+**总结：**
+
+HTML属性编码和HTML编码在实现原理上是一样的，唯一的不同点就是HTML属性编码需要对空格进行编码。所以也就是免疫了一个空格而已。
+
+##### （3）调用JavaScript编码器
+
+
+
+
+
+#### 2、针对sql注入漏洞
 
 除了支持mysql还支持oracle
 
@@ -317,8 +382,6 @@ if(!ESAPI.validator().isValidFileName("upload",inputfilename, allowedExtension,f
 System.out.println(ESAPI.randomizer().getRandomFilename("exe"));
 //得到结果rnQO8AK4ymmv.exe
 ```
-
-
 
 
 
