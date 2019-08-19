@@ -210,7 +210,7 @@ Validator.CreditCard=^(\\d{4}[- ]?){3}\\d{4}$
 
 增加测试类：
 
-```
+```java
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Encoder;
 import org.owasp.esapi.codecs.MySQLCodec;
@@ -244,7 +244,7 @@ http%3A%2F%2Fwww.baidu.com%2F%3Fid%3Da%26%26age%3D11
 
 #### 1、针对xss漏洞
 
-```
+```java
 //对用户输入“input”进行HTML编码，防止XSS
 input = ESAPI.encoder().encodeForHTML(input);
 //根据自己不同的需要可以选用以下方法
@@ -274,7 +274,7 @@ Encode接口针对XSS的预发是在输出编码上，根据你要输出到不�
 
 Code:
 
-```
+```java
 System.out.println(ESAPI.encoder().encodeForHTML("<script>alert(/xss/)</script>"));
 System.out.println(ESAPI.encoder().encodeForHTML("data 12"));
 ```
@@ -303,7 +303,7 @@ System.out.println(ESAPI.encoder().encodeForHTML("data 12"));
 
 code:
 
-```
+```java
 System.out.println(ESAPI.encoder().encodeForHTMLAttribute("<script>alert(/xss/)</script>"));
 
 System.out.println(ESAPI.encoder().encodeForHTMLAttribute("data 12"));
@@ -315,9 +315,42 @@ System.out.println(ESAPI.encoder().encodeForHTMLAttribute("data 12"));
 
 HTML属性编码和HTML编码在实现原理上是一样的，唯一的不同点就是HTML属性编码需要对空格进行编码。所以也就是免疫了一个空格而已。
 
+
+
 ##### （3）调用JavaScript编码器
 
+code:
 
+```java
+System.out.println(ESAPI.encoder().encodeForJavaScript("<script>alert(/xss/)</script>"));
+
+System.out.println(ESAPI.encoder().encodeForJavaScript("data 12"));
+```
+
+![](/assets/esapi-4.png)
+
+总结：
+
+JavaScript编码器首先判断是不是免疫的字符，如果是免疫字符，就直接返回；如果是数字、字母也直接返回；如果是小于256的字符就使用\xHH的编码方式；如果是大于256的字符，就使用\uHHHHH的方式编码。
+
+
+
+##### （4）调用CSS编码器
+
+code:
+
+```java
+System.out.println(ESAPI.encoder().encodeForCSS("<script>alert(/xss/)</script>"));
+
+System.out.println(ESAPI.encoder().encodeForCSS("data 12"));
+
+```
+
+![](/assets/esapi-5.png)
+
+总结：
+
+ESAPI的CSS编码是通过反斜杠（\）加上十六进制数进行的编码。会对空格、特殊字符都进行编码。
 
 
 
