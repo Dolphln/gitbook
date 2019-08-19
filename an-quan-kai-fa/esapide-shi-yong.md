@@ -37,7 +37,7 @@ owasp top 10所对应的API接口
 
 #### 第二步：加入配置文件
 
-在工程的资源文件目录下增加配置文件ESAPI.properties及validation.properties，文件内容可为空。如果为空则都取默认值。建议参考以下文件内容设置
+在工程的资源文件目录下（src/main/resources）增加配置文件ESAPI.properties及validation.properties，文件内容可为空。如果为空则都取默认值。建议参考以下文件内容设置
 
 ##### ESAPI.properties
 
@@ -675,8 +675,6 @@ ESAPI.accessController\(\).assertAuthorizedForURL\(request.getRequestURI\(\).toS
 个人总结：
 
 该方法检查当前用户是否被授权访问引用的URL。通常该方法在应用程序的控制器或过滤器中调用。
-
-
 
 参考：
 
