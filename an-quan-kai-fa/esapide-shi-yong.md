@@ -297,8 +297,6 @@ System.out.println(ESAPI.encoder().encodeForHTML("data 12"));
 
 这样即使用户输入了html标签，在返回到浏览器的时候也得不到执行。因为已经转换成html编码了。
 
-
-
 ##### **（2）调用HTML属性编码器**
 
 code:
@@ -313,7 +311,9 @@ System.out.println(ESAPI.encoder().encodeForHTMLAttribute("data 12"));
 
 **总结：**
 
-         HTML属性编码和HTML编码在实现原理上是一样的，唯一的不同点就是HTML属性编码需要对空格进行编码。所以也就是免疫了一个空格而已。
+```
+     HTML属性编码和HTML编码在实现原理上是一样的，唯一的不同点就是HTML属性编码需要对空格进行编码。所以也就是免疫了一个空格而已。
+```
 
 ##### （3）调用JavaScript编码器
 
@@ -329,9 +329,9 @@ System.out.println(ESAPI.encoder().encodeForJavaScript("data 12"));
 
 总结：
 
-       JavaScript编码器首先判断是不是免疫的字符，如果是免疫字符，就直接返回；如果是数字、字母也直接返回；如果是小于256的字符就使用\xHH的编码方式；如果是大于256的字符，就使用\uHHHHH的方式编码。
-
-
+```
+   JavaScript编码器首先判断是不是免疫的字符，如果是免疫字符，就直接返回；如果是数字、字母也直接返回；如果是小于256的字符就使用\xHH的编码方式；如果是大于256的字符，就使用\uHHHHH的方式编码。
+```
 
 ##### （4）调用CSS编码器
 
@@ -347,9 +347,9 @@ System.out.println(ESAPI.encoder().encodeForCSS("data 12"));
 
 总结：
 
-          ESAPI的CSS编码是通过反斜杠（\）加上十六进制数进行的编码。会对空格、特殊字符都进行编码。
-
-
+```
+      ESAPI的CSS编码是通过反斜杠（\）加上十六进制数进行的编码。会对空格、特殊字符都进行编码。
+```
 
 ##### （5）调用URL编码器
 
@@ -361,15 +361,13 @@ System.out.println(ESAPI.encoder().encodeForURL("http://www.baidu.com/?id=1&page
 System.out.println(ESAPI.encoder().encodeForURL("http://www.baidu.com/?callback=<script>alert('xss')</script>"));
 ```
 
-
-
 ![](/assets/esapi-6.png)
 
 总结：
 
-        URL编码器先将字符串转换为UTF-8，然后对转换的字符串用%加上十六进制数的方式编码。
-
-
+```
+    URL编码器先将字符串转换为UTF-8，然后对转换的字符串用%加上十六进制数的方式编码。
+```
 
 ##### （6）调用复合\(嵌套\)编码器
 
@@ -377,30 +375,31 @@ code:
 
 ```java
 System.out.println(ESAPI.encoder().encodeForJavaScript(ESAPI.encoder().encodeForHTML("<a href='sdfs'></a> < script > alert(); </ script >")));
-
 ```
 
 总结：
 
-      上面那几种都只能处理一种编码的情况，对于存在多种编码的情况，可以使用复合\(嵌套\)编码，它根据由内到外的调用顺序来执行ESAPI的编码方法。
+```
+  上面那几种都只能处理一种编码的情况，对于存在多种编码的情况，可以使用复合\(嵌套\)编码，它根据由内到外的调用顺序来执行ESAPI的编码方法。
+```
 
 ##### （7）小结
 
-         由于Web页面上输出内容的地方很多，输出的背景环境也不相同，甚至有同一个输入可能输出到同一个页面上的不同地方，每一个地方的编码也可能不同，所以想彻底预防XSS是很困难的。从安全的角度考虑，建议使用HTTPOnly标志。
-
-
-
-
+```
+     由于Web页面上输出内容的地方很多，输出的背景环境也不相同，甚至有同一个输入可能输出到同一个页面上的不同地方，每一个地方的编码也可能不同，所以想彻底预防XSS是很困难的。从安全的角度考虑，建议使用HTTPOnly标志。
+```
 
 ##### （8）Validator接口
 
-        Validator接口定义了一组用于规范化和验证不可信输入的方法。开发人员可以扩展这个接口以适应自己的数据格式。与抛出异常相比，这个接口返回布尔结果，因为并非所有的验证问题都是安全问题。布尔返回允许开发人员更清晰地处理有效、无效的结果。
+```
+    Validator接口定义了一组用于规范化和验证不可信输入的方法。开发人员可以扩展这个接口以适应自己的数据格式。与抛出异常相比，这个接口返回布尔结果，因为并非所有的验证问题都是安全问题。布尔返回允许开发人员更清晰地处理有效、无效的结果。
+```
 
 开发人员使用这个方法的时候必须采用“白名单”方法来验证特定的模式或字符集匹配。因为“黑名单”有可能被绕过。
 
-
-
-        调用getValidInput\( \)
+```
+    调用getValidInput\( \)
+```
 
 ```java
 // 1
@@ -440,13 +439,11 @@ try {
 
 返回规范化和验证过的输入数据。所有无效的输入将生成一个描述性的ValidationException异常。
 
-
-
 #### 2、针对注入类漏洞
 
-           防治Injection Flaws类型的漏洞有多种类型比如有命令注入、XPath注入、LDAP注入、SQL注入、其它注入，我举例一个SQL注入的防护，而针对SQL注入ESAPI提供了一个相关接口Encode。
-
-
+```
+       防治Injection Flaws类型的漏洞有多种类型比如有命令注入、XPath注入、LDAP注入、SQL注入、其它注入，我举例一个SQL注入的防护，而针对SQL注入ESAPI提供了一个相关接口Encode。
+```
 
 Encode接口 1.调用 ESAPI.Encoder\(\).encodeForSQL\(\)
 
@@ -472,9 +469,6 @@ String sqlStr="select name from tableA where id="+input1 +"and date_created ='" 
 应用场景：
 
 比如在搜索、查询场景下，需要用户输入的字符串插入SQL命令的地方，就可以运用。
-
-  
-
 
 #####  {#验证输入}
 
@@ -504,19 +498,19 @@ String input="xxxx.com";
         }
 ```
 
-
-
 #### 3、恶意文件执行类漏洞
 
-        防治Malicious File Execution类型的漏洞，ESAPI提供了一个相关接口 Validator。
+```
+    防治Malicious File Execution类型的漏洞，ESAPI提供了一个相关接口 Validator。
 
-        Validator接口
+    Validator接口
 
-         使用ESAPI防治恶意文件执行漏洞有2个方法，1是使用ESAPI验证上传文件名。2是检查文件大小。
+     使用ESAPI防治恶意文件执行漏洞有2个方法，1是使用ESAPI验证上传文件名。2是检查文件大小。
+```
 
 #####  {#验证恶意文件}
 
-##### （1）调用isValidFileName\(\)  {#验证恶意文件}
+##### （1）调用isValidFileName\(\) {#验证恶意文件}
 
 ```java
 //校验文件名
@@ -542,8 +536,6 @@ ServletFileUpload upload=newServletFileUpload(factory);
 upload.setSizeMax(maxBytes)；
 ```
 
-
-
 #### 4、不安全的直接对象引用类漏洞
 
 防治Insecure Direct Object Reference类型的漏洞，ESAPI提供了两个相关类AccessReferenceMap、AccessController。
@@ -552,14 +544,13 @@ AccessReferenceMap类
 
 AccessReferenceMap是ESAPI提供的用户实现非直接引用ID和直接引用ID之间匹配的类。
 
-#####  （1）.实例化RandomAccessReferenceMap类
+##### （1）.实例化RandomAccessReferenceMap类
 
 ```java
 //使用随机访问的引用map
 AccessReferenceMapmap = new RandomAccessReferenceMap();
 
 String userID =arm.getDirectReference(indirectRef);
-
 ```
 
 应用场景：
@@ -570,19 +561,17 @@ AccessController接口
 
 角色权限验证，检查当前用户对应的角色是否有权限访问url，权限的定义在esapi\fbac-policies\URLAccessRules.txt文件中。
 
-
-
 1.调用assertAuthorizedForURL\(\)
 
 ```java
 ESAPI.accessController().assertAuthorizedForURL();
 ```
 
-
-
 #### 5、CSRF类漏洞
 
-        防治Cross Site Request Forgery类型的漏洞，最常用的解决方案就是使用Token，在任何需要保护的表单，增加一个隐藏的字段来存放这个Token。对于需要保护的URL，需要增加一个参数来存放这个Token。ESAPI提供了一个相关接口 User。
+```
+    防治Cross Site Request Forgery类型的漏洞，最常用的解决方案就是使用Token，在任何需要保护的表单，增加一个隐藏的字段来存放这个Token。对于需要保护的URL，需要增加一个参数来存放这个Token。ESAPI提供了一个相关接口 User。
+```
 
 User接口
 
@@ -609,8 +598,6 @@ c.在服务器端检查提交令牌与用户会话对象令牌是否匹 配。
 
 d.在注销和会话超时，删除用户对象会话和会话销毁。
 
-
-
 总结：
 
 用ESAPI防止CSRF攻击的关键点就是生成Token，而且不能被攻击者知道生成方式，如果攻击者能伪造你的Token说明也是不安全的。还有CSRF安全的前提是你的站点没有XSS，不然攻击者利用XSS漏洞一样可以绕过CSRF检测。
@@ -618,8 +605,6 @@ d.在注销和会话超时，删除用户对象会话和会话销毁。
 应用场景：
 
 在登录用户进行的操作里，都可以加上Token，比如用户提交修改密码操作。
-
-
 
 #### 6、安全配置错误类漏洞
 
@@ -661,8 +646,6 @@ String decrypted =ESAPI.encryptor().decrypt(ciphertext);
 
 解密所提供的密文，使用来自它的信息和由属性Encryptor指定的主加密密钥。
 
-
-
 #### 9、 传输层保护不足类漏洞
 
 防治Insecure Communications类型的漏洞，预防措施有三种：
@@ -692,4 +675,14 @@ ESAPI.accessController\(\).assertAuthorizedForURL\(request.getRequestURI\(\).toS
 个人总结：
 
 该方法检查当前用户是否被授权访问引用的URL。通常该方法在应用程序的控制器或过滤器中调用。
+
+
+
+参考：
+
+[http://liehu.tass.com.cn/archives/1427](http://liehu.tass.com.cn/archives/1427)
+
+[https://blog.csdn.net/frog4/article/details/81876462](https://blog.csdn.net/frog4/article/details/81876462)
+
+[https://wenku.baidu.com/view/c24d4e642af90242a895e588.html](https://wenku.baidu.com/view/c24d4e642af90242a895e588.html)
 
