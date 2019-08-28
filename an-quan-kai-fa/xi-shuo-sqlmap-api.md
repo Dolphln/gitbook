@@ -249,7 +249,7 @@ def task_delete(taskid):
 
 ![](/assets/sqlmap-11.png)
 
-#### @get\("/admin/list"\)/@get\("/admin//list"\) {#getadminlistgetadminlist}
+#### @get\("/admin/list"\) {#getadminlistgetadminlist}
 
 该接口用于返回所有 taskid。在调用时指定 taskid，不指定 taskid 会有问题。 具体代码如下：
 
@@ -270,7 +270,7 @@ def task_list(token=None):
 
 ![](/assets/sqlmap-12.png)
 
-#### @get\("/admin/flush"\)/@get\("/admin//flush"\) {#getadminflushgetadminflush}
+#### @get\("/admin/flush"\) {#getadminflushgetadminflush}
 
 该接口用于删除所有任务。在调用时指定admin token，不指定admin token可能会有问题。 具体代码如下：
 
@@ -494,8 +494,6 @@ def scan_data(taskid):
 ![](/assets/sqlmap-21.png)
 
 #### @get\("/scan//log"\) {#getscanlog}
-
-/@get\("/scan//log//"\)
 
 该接口可查询特定任务的扫描的日志，调用时请指定 taskid，不然会出现问题。 具体代码如下：
 
