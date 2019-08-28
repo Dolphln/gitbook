@@ -444,7 +444,7 @@ def scan_status(taskid):
     })
 ```
 
-下图是调用该接口的截图：![](/assets/sqlmap-19.png)
+下图是调用该接口的截图：19![](/assets/sqlmap-19.png)
 
 #### @get\("/scan//data"\) {#getscandata}
 
@@ -469,5 +469,525 @@ def scan_data(taskid):
     return jsonize({"success": True, "data": json_data_message, "error": json_errors_message})
 ```
 
+下图是调用该接口的截图：
 
+存在 SQL 注入的返回结果，返回的内容包括 payload、数据库类型等等。
+
+![](/assets/sqlmap-200.png)
+
+不存在注入的返回结果
+
+![](/assets/sqlmap-21.png)
+
+
+
+#### @get\("/scan//log"\) {#getscanlog}
+
+/@get\("/scan//log//"\)
+
+该接口可查询特定任务的扫描的日志，调用时请指定 taskid，不然会出现问题。 具体代码如下：
+
+```py
+def scan_log(taskid):
+    """
+    Retrieve the log messages
+    """
+    json_log_messages = list()
+    if taskid not in DataStore.tasks:
+        logger.warning("[%s] Invalid task ID provided to scan_log()" % taskid)
+        return jsonize({"success": False, "message": "Invalid task ID"})
+    # Read all log messages from the IPC database
+    for time_, level, message in DataStore.current_db.execute("SELECT time, level, message FROM logs WHERE taskid = ? ORDER BY id ASC", (taskid,)):
+        json_log_messages.append({"time": time_, "level": level, "message": message})
+    logger.debug("(%s) Retrieved scan log messages" % taskid)
+    return jsonize({"success": True, "log": json_log_messages})
+
+
+def scan_log_limited(taskid, start, end):
+    """
+    Retrieve a subset of log messages
+    """
+    json_log_messages = list()
+    if taskid not in DataStore.tasks:
+        logger.warning("[%s] Invalid task ID provided to scan_log_limited()" % taskid)
+        return jsonize({"success": False, "message": "Invalid task ID"})
+    if not start.isdigit() or not end.isdigit() or end < start:
+        logger.warning("[%s] Invalid start or end value provided to scan_log_limited()" % taskid)
+        return jsonize({"success": False, "message": "Invalid start or end value, must be digits"})
+    start = max(1, int(start))
+    end = max(1, int(end))
+    # Read a subset of log messages from the IPC database
+    for time_, level, message in DataStore.current_db.execute("SELECT time, level, message FROM logs WHERE taskid = ? AND id >= ? AND id <= ? ORDER BY id ASC", (taskid, start, end)):
+        json_log_messages.append({"time": time_, "level": level, "message": message})
+    logger.debug("(%s) Retrieved scan log messages subset" % taskid)
+    return jsonize({"success": True, "log": json_log_messages})
+```
+
+
+
+### 准备
+
+使用该模式接口需要用到 python 的两个库文件，一个是 requests 库，一个是 json 库。
+
+下图是导入库的操作：
+
+![](/assets/sqlmap-22.png)
+
+#### 检测 GET 型注入 {#get_1}
+
+下面是完整的一次 API 接口访问，"从创建任务 ID，到发送扫描指令，再到查询扫描状态，最后查询结果”的过程。
+
+```py
+>>> r = requests.get("http://127.0.0.1:8775/task/new")  创建一个新的扫描任务
+>>> r.json()
+{'taskid': 'c87dbb00644ed7b7', 'success': True} 获取响应的返回内容
+>>> r = requests.post('http://127.0.0.1:8775/scan/c87dbb00644ed7b7/start', data=json.dumps({'url':'http://192.168.1.104/sql-labs/Less-2/?id=1'}), headers={'Content-Type':'application/json'})  开启一个扫描任务
+>>> r = requests.get("http://127.0.0.1:8775/scan/c87dbb00644ed7b7/status")  查询任务的扫描状态
+>>> r.json()
+{'status': 'terminated', 'returncode': 0, 'success': True}
+>>> r = requests.get("http://127.0.0.1:8775/scan/c87dbb00644ed7b7/data")  
+获取扫描的结果
+>>> r.json()
+{'data': [{'status': 1, 'type': 0, 'value': {'url': 'http://192.168.1.104:80/sql-labs/Less-2/', 'query': 'id=1', 'data': None}}, {'status': 1, 'type': 1, 'value': [{'dbms': 'MySQL', 'suffix': '', 'clause': [1, 8, 9], 'notes': [], 'ptype': 1, 'dbms_version': ['>= 5.0'], 'prefix': '', 'place': 'GET', 'data': {'1': {'comment': '', 'matchRatio': 0.957, 'title': 'AND boolean-based blind - WHERE or HAVING clause', 'trueCode': 200, 'templatePayload': None, 'vector': 'AND [INFERENCE]', 'falseCode': 200, 'where': 1, 'payload': 'id=1 AND 8693=8693'}..., 'success': True, 'error': []}
+```
+
+可能您会被最后返回的结果好奇，ptype、suffix、clause等等都是什么意思呢？ 下面我给出部分字段的含义：
+
+![](/assets/sqlmap-23.png)
+
+#### 检测 POST注入、COOKIE、UA等注入 {#postcookieua}
+
+检测 POST 注入和检测 GET 注入类似，但是还是有一定区别的，与 GET 注入检测区别如下，流程上是一样的，不同的是开启扫描任务的时候，多提交一个 data 字段。
+
+```py
+requests.post('http://127.0.0.1:8775/scan/cb9c4b4e4f1996b5/start', data=json.dumps({'url':'http://192.168.1.104/sql/sql/post.php','data':'keyword=1'}), headers={'Content-Type':'application/json'})
+```
+
+下面是一次完整的 POST 注入检测过程
+
+![](/assets/sqlmap-24.png)具体输入输出代码如下：
+
+```py
+>>> r = requests.get("http://127.0.0.1:8775/task/new")
+>>> r.json()
+{'taskid': 'cb9c4b4e4f1996b5', 'success': True}
+>>> r = requests.post('http://127.0.0.1:8775/scan/cb9c4b4e4f1996b5/start', data=json.dumps({'url':'http://192.168.1.104/sql/sql/post.php','data':'keyword=1'}), headers={'Content-Type':'application/json'})
+>>> r.json()
+{'engineid': 9682, 'success': True}
+>>> r = requests.get("http://127.0.0.1:8775/scan/cb9c4b4e4f1996b5/status")
+>>> r.json()
+{'status': 'terminated', 'returncode': 0, 'success': True}
+>>> r = requests.get("http://127.0.0.1:8775/scan/cb9c4b4e4f1996b5/data")
+>>> r.json()
+{'data': [{'status': 1, 'type': 0, 'value': {'url': 'http://192.168.1.104:80/sql/sql/post.php', 'query': None, 'data': 'keyword=1'}}, {'status': 1, 'type': 1, 'value': [{'dbms': 'MySQL', 'suffix': '', 'clause': [1, 8, 9], 'notes': [], 'ptype': 1, 'dbms_version': ['>= 5.0.12'], 'prefix': '', 'place': 'POST', 'os': None, 'conf': {'code': None, 'string': 'Title=FiveAourThe??', 'notString': None, 'titles': None, 'regexp': None, 'textOnly': None, 'optimize': None}, 'parameter': 'keyword', 'data': {'1': {'comment': '', 'matchRatio': 0.863, 'trueCode': 200, 'title': 'AND boolean-based blind - WHERE or HAVING clause', 'templatePayload': None, 'vector': 'AND [INFERENCE]', 'falseCode': 200, 'where': 1, 'payload': 'keyword=1 AND 3424=3424'}...], 'success': True, 'error': []}
+```
+
+那么如何检测 COOKIE 注入、UA 注入这些呢？下面笔者将列出 api 接口可接收的所有字段，若要检测 COOKIE 注入的话，我们只要在`@post("/scan/<taskid>/start")`接口中，传入 cookie 字段；若要检测 referer 注入的话，我们只要在`@post("/scan/<taskid>/start")`接口中，传入 referer 字段。
+
+若要从注入点中获取数据库的版本、数据库的用户名这些，只要在`@post("/scan/<taskid>/start")`接口中，传入 getBanner 字段，并设置为 True，传入 getUsers 字段，并设置为 True。
+
+```
+crawlDepth: None
+osShell: False
+getUsers: False
+getPasswordHashes: False
+excludeSysDbs: True
+ignoreTimeouts: False
+regData: None
+fileDest: None
+prefix: None
+code: None
+googlePage: 1
+skip: None
+query: None
+randomAgent: False
+osPwn: False
+authType: None
+safeUrl: None
+requestFile: None
+predictOutput: False
+wizard: False
+stopFail: False
+forms: False
+uChar: None
+secondReq: None
+taskid: 630f50607ebf91dc
+pivotColumn: None
+preprocess: None
+dropSetCookie: False
+smart: False
+paramExclude: None
+risk: 1
+sqlFile: None
+rParam: None
+getCurrentUser: False
+notString: None
+getRoles: False
+getPrivileges: False
+testParameter: None
+tbl: None
+charset: None
+trafficFile: None
+osSmb: False
+level: 1
+dnsDomain: None
+outputDir: None
+skipWaf: False
+timeout: 30
+firstChar: None
+torPort: None
+getComments: False
+binaryFields: None
+checkTor: False
+commonTables: False
+direct: None
+tmpPath: None
+titles: False
+getSchema: False
+identifyWaf: False
+paramDel: None
+safeReqFile: None
+regKey: None
+murphyRate: None
+limitStart: None
+crawlExclude: None
+flushSession: False
+loadCookies: None
+csvDel: ,
+offline: False
+method: None
+tmpDir: None
+fileWrite: None
+disablePrecon: False
+osBof: False
+testSkip: None
+invalidLogical: False
+getCurrentDb: False
+hexConvert: False
+proxyFile: None
+answers: None
+host: None
+dependencies: False
+cookie: None
+proxy: None
+updateAll: False
+regType: None
+repair: False
+optimize: False
+limitStop: None
+search: False
+shLib: None
+uFrom: None
+noCast: False
+testFilter: None
+ignoreCode: None
+eta: False
+csrfToken: None
+threads: 1
+logFile: None
+os: None
+col: None
+skipStatic: False
+proxyCred: None
+verbose: 1
+isDba: False
+encoding: None
+privEsc: False
+forceDns: False
+getAll: False
+api: True
+url: http://10.20.40.95/sql-labs/Less-4/?id=1
+invalidBignum: False
+regexp: None
+getDbs: False
+freshQueries: False
+uCols: None
+smokeTest: False
+udfInject: False
+invalidString: False
+tor: False
+forceSSL: False
+beep: False
+noEscape: False
+configFile: None
+scope: None
+authFile: None
+torType: SOCKS5
+regVal: None
+dummy: False
+checkInternet: False
+safePost: None
+safeFreq: None
+skipUrlEncode: False
+referer: None
+liveTest: False
+retries: 3
+extensiveFp: False
+dumpTable: False
+getColumns: False
+batch: True
+purge: False
+headers: None
+authCred: None
+osCmd: None
+suffix: None
+dbmsCred: None
+regDel: False
+chunked: False
+sitemapUrl: None
+timeSec: 5
+msfPath: None
+dumpAll: False
+fileRead: None
+getHostname: False
+sessionFile: None
+disableColoring: True
+getTables: False
+listTampers: False
+agent: None
+webRoot: None
+exclude: None
+lastChar: None
+string: None
+dbms: None
+dumpWhere: None
+tamper: None
+ignoreRedirects: False
+hpp: False
+runCase: None
+delay: 0
+evalCode: None
+cleanup: False
+csrfUrl: None
+secondUrl: None
+getBanner: False
+profile: False
+regRead: False
+bulkFile: None
+db: None
+dumpFormat: CSV
+alert: None
+harFile: None
+nullConnection: False
+user: None
+parseErrors: False
+getCount: False
+data: None
+regAdd: False
+ignoreProxy: False
+database: /tmp/sqlmapipc-lI97N8
+mobile: False
+googleDork: None
+saveConfig: None
+sqlShell: False
+tech: BEUSTQ
+textOnly: False
+cookieDel: None
+commonColumns: False
+keepAlive: False
+```
+
+### 总结
+
+基于 HTTP 的接口模式用起来可能比较繁琐，但是对于程序调用接口还是很友善的。总之该模式的流程是：
+
+1、通过GET请求[http://ip:port](http://ip:port)/task/new 这个地址，创建一个新的扫描任务；
+
+2、通过POST请求[http://ip:port](http://ip:port)/scan//start 地址，并通过json格式提交参数，开启一个扫描；通过GET请求[http://ip:port/](http://ip:port/)scan//status 地址，即可获取指定的taskid的扫描状态。这个返回值分为两种，一种是 run 状态（扫描未完成），一种是 terminated 状态（扫描完成）；
+
+3、扫描完成后获取扫描的结果。
+
+
+
+# 使用 Python3 编写 sqlmapapi 调用程序 {#python3-sqlmapapi}
+
+下面就来编写一个 sqlmapapi 调用程序，首先我们得再次明确一下流程：
+
+1、通过 sqlmapapi.py -s -H "0.0.0.0" 开启sqlmap api的服务端。服务端启动后，在服务端命令行中会返回一个随机的admin token值，这个token值用于管理taskid（获取、清空操作），在这个流程中不需要amin token这个值，可以忽略。之后，服务端会处于一个等待客户端的状态。
+
+2、通过GET请求[http://ip:port](http://ip:port)/task/new 这个地址，即可创建一个新的扫描任务，在响应中会返回一个随机的taskid。这个taskid在这个流程中尤为重要，因此需要通过变量存储下来，方便后面程序的调用。
+
+3、通过POST请求[http://ip:port](http://ip:port)/scan//start 地址，并通过json格式提交参数\(待扫描的HTTP数据包、若存在注入是否获取当前数据库用户名\)，即可开启一个扫描任务，该请求会返回一个enginedid。
+
+4、通过GET请求[http://ip:port/](http://ip:port/)scan//status 地址，即可获取指定的taskid的扫描状态。这个返回值分为两种，一种是run状态（扫描未完成），一种是terminated状态（扫描完成）。
+
+5、判断扫描状态，如果扫描未完成，再次请求[http://ip:port/](http://ip:port/)scan//status 地址 ，直到扫描完成。
+
+6、扫描完成后获取扫描的结果，是否是SQL注入，若不存在SQL注入，data字段为空，若存在SQL注入，则会返回数据库类型、payload等等。
+
+明确了流程后，为了可维护性好和 main.py 文件代码量少，笔者首先是写了一个类，代码如下：
+
+```py
+#!/usr/bin/python
+# -*- coding:utf-8 -*-
+# wirter:En_dust
+import requests
+import json
+import time
+
+class Client():
+    def __init__(self,server_ip,server_port,admin_token="",taskid="",filepath=None):
+        self.server = "http://" + server_ip + ":" + server_port
+        self.admin_token = admin_token
+        self.taskid = taskid
+        self.filepath = ""
+        self.status = ""
+        self.scan_start_time = ""
+        self.scan_end_time = ""
+        self.engineid=""
+        self.headers = {'Content-Type': 'application/json'}
+
+
+
+    def create_new_task(self):
+        '''创建一个新的任务，创建成功返回taskid'''
+        r = requests.get("%s/task/new"%(self.server))
+        self.taskid = r.json()['taskid']
+        if self.taskid != "":
+            return self.taskid
+        else:
+            print("创建任务失败!")
+            return None
+
+    def set_task_options(self,url):
+        '''设置任务扫描的url等'''
+        self.filepath = url
+
+
+
+    def start_target_scan(self,url):
+        '''开始扫描的方法,成功开启扫描返回True，开始扫描失败返回False'''
+        r = requests.post(self.server + '/scan/' + self.taskid + '/start',
+                      data=json.dumps({'url':url,'getCurrentUser':True,'getBanner':True,'getCurrentDb':True}),
+                      headers=self.headers)
+        if r.json()['success']:
+            self.scan_start_time = time.time()
+            #print(r.json())
+            #print(r.json()['engineid'])
+            return r.json()['engineid']
+        else:
+            #print(r.json())
+            return None
+
+    def get_scan_status(self):
+        '''获取扫描状态的方法,扫描完成返回True，正在扫描返回False'''
+        self.status = json.loads(requests.get(self.server + '/scan/' + self.taskid + '/status').text)['status']
+        if self.status == 'terminated':
+            self.scan_end_time = time.time()
+            #print("扫描完成!")
+            return True
+        elif self.status == 'running':
+            #print("Running")
+            return False
+        else:
+            #print("未知错误！")
+            self.status = False
+
+
+
+    def get_result(self):
+        '''获取扫描结果的方法，存在SQL注入返回payload和注入类型等，不存在SQL注入返回空'''
+        if(self.status):
+            r = requests.get(self.server + '/scan/' + self.taskid + '/data')
+            if (r.json()['data']):
+                return r.json()['data']
+            else:
+                return None
+
+    def get_all_task_list(self):
+        '''获取所有任务列表'''
+        r = requests.get(self.server + '/admin/' + self.admin_token + "/list")
+        if r.json()['success']:
+            #print(r.json()['tasks'])
+            return r.json()['tasks']
+        else:
+            return None
+
+    def del_a_task(self,taskid):
+        '''删除一个任务'''
+        r = requests.get(self.server + '/task/' + taskid + '/delete')
+        if r.json()['success']:
+            return True
+        else:
+            return False
+
+    def stop_a_scan(self,taskid):
+        '''停止一个扫描任务'''
+        r = requests.get(self.server + '/scan/' + taskid + '/stop')
+        if r.json()['success']:
+            return True
+        else:
+            return False
+
+    def flush_all_tasks(self):
+        '''清空所有任务'''
+        r =requests.get(self.server + '/admin/' + self.admin_token + "/flush")
+        if r.json()['success']:
+            return True
+        else:
+            return False
+
+    def get_scan_log(self):
+        '''获取log'''
+        r = requests.get(self.server + '/scan/' + self.taskid + '/log')
+        return r.json()
+```
+
+main.py
+
+```py
+#!/usr/bin/python
+# -*- coding:utf-8 -*-
+# wirter:En_dust
+from Service import Client
+import time
+from threading import Thread
+
+def main():
+    '''实例化Client对象时需要传递sqlmap api 服务端的ip、port、admin_token和HTTP包的绝对路径'''
+    print("————————————————Start Working！—————————————————")
+    target = input("url:")
+    task1 = Thread(target=set_start_get_result,args=(target,))
+    task1.start()
+
+
+
+def time_deal(mytime):
+     first_deal_time = time.localtime(mytime)
+     second_deal_time = time.strftime("%Y-%m-%d %H:%M:%S", first_deal_time)
+     return  second_deal_time
+
+
+def set_start_get_result(url):
+    #/home/cheng/Desktop/sqldump/1.txt
+    current_taskid =  my_scan.create_new_task()
+    print("taskid: " + str(current_taskid))
+    my_scan.set_task_options(url=url)
+    print("扫描id:" + str(my_scan.start_target_scan(url=url)))
+    print("扫描开始时间：" + str(time_deal(my_scan.scan_start_time)))
+    while True:
+        if my_scan.get_scan_status() == True:
+            print(my_scan.get_result())
+            print("当前数据库:" + str(my_scan.get_result()[-1]['value']))
+            print("当前数据库用户名:" + str(my_scan.get_result()[-2]['value']))
+            print("数据库版本:" + str(my_scan.get_result()[-3]['value']))
+            print("扫描结束时间：" + str(time_deal(my_scan.scan_end_time)))
+            print("扫描日志：\n" + str(my_scan.get_scan_log()))
+            break
+
+
+
+
+if __name__ == '__main__':
+    my_scan = Client("127.0.0.1", "8775", "c88927c30abb1ef6ea78cb81ac7ac6b0")
+    main()
+```
+
+Github 地址：
+
+[https://github.com/FiveAourThe/sqlmap\_api\_demo](https://github.com/FiveAourThe/sqlmap_api_demo)
+
+
+
+原文地址：[https://paper.seebug.org/940/](https://paper.seebug.org/940/)
 
