@@ -208,7 +208,7 @@ return response
 
 #### @get\("/task/new"\) {#gettasknew}
 
-该接口用于创建一个新的任务，使用后会返回一个随机的 taskid。 
+该接口用于创建一个新的任务，使用后会返回一个随机的 taskid。
 
 下图是调用该接口的截图
 
@@ -216,7 +216,7 @@ return response
 
 #### @get\("/task/&lt;taskid&gt;/delete"\) {#gettaskdelete}
 
-该接口用于删除 taskid。在调用时指定 taskid，不指定 taskid 会有问题。 
+该接口用于删除 taskid。在调用时指定 taskid，不指定 taskid 会有问题。
 
 下图是调用该接口的截图：
 
@@ -224,7 +224,7 @@ return response
 
 #### @get\("/admin/list"\) {#getadminlistgetadminlist}
 
-该接口用于返回所有 taskid。在调用时指定 taskid，不指定 taskid 会有问题。 
+该接口用于返回所有 taskid。在调用时指定 taskid，不指定 taskid 会有问题。
 
 下图是调用该接口的截图：
 
@@ -238,7 +238,7 @@ return response
 
 #### @get\("/option/&lt;taskid&gt;/list"\) {#getoptionlist}
 
-该接口可获取特定任务ID的列表选项，调用时请指定taskid，不然会出现问题。 
+该接口可获取特定任务ID的列表选项，调用时请指定taskid，不然会出现问题。
 
 下图是调用该接口的截图：
 
@@ -254,7 +254,7 @@ return response
 
 #### @post\("/option/&lt;taskid&gt;/set"\) {#postoptionset}
 
-该接口为特定任务 ID 设置选项值，调用时请指定 taskid，不然会出现问题。 
+该接口为特定任务 ID 设置选项值，调用时请指定 taskid，不然会出现问题。
 
 下图是调用该接口的截图：16
 
@@ -262,7 +262,7 @@ return response
 
 #### @post\("/scan/&lt;taskid&gt;/start"\) {#postscanstart}
 
-该接口定义开始扫描特定任务，调用时请指定 taskid，不然会出现问题。 
+该接口定义开始扫描特定任务，调用时请指定 taskid，不然会出现问题。
 
 下图是调用该接口的截图：
 
@@ -278,9 +278,7 @@ return response
 
 #### @get\("/scan/&lt;taskid&gt;/kill"\) {#getscankill}
 
-该接口可杀死特定任务，需要指定 taskid，不然会出现问题。 
-
-####  {#getscanstatus}
+该接口可杀死特定任务，需要指定 taskid，不然会出现问题。
 
 #### @get\("/scan/taskid/status"\) {#getscanstatus}
 
@@ -296,7 +294,7 @@ return response
 
 存在 SQL 注入的返回结果，返回的内容包括 payload、数据库类型等等。
 
-![](/assets/sqlmap-200.png)
+![](/assets/sqlmap-20.png)
 
 不存在注入的返回结果
 
