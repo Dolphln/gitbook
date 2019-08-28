@@ -201,49 +201,22 @@ new -r data.txt
 
 该接口在我的理解表明首先需要登录（Admin token），不然会返回状态码 401。 具体代码如下：
 
-```
-? ? response.status = 401
-? ? return response
+```py
+response.status = 401
+return response
 ```
 
 #### @get\("/task/new"\) {#gettasknew}
 
-该接口用于创建一个新的任务，使用后会返回一个随机的 taskid。 具体代码如下：
-
-```py
-def task_new():
-    """
-    Create a new task
-    """
-    taskid = hexencode(os.urandom(8))
-    remote_addr = request.remote_addr
-    DataStore.tasks[taskid] = Task(taskid, remote_addr)
-    logger.debug("Created new task: '%s'" % taskid)
-    return jsonize({"success": True, "taskid": taskid})
-```
+该接口用于创建一个新的任务，使用后会返回一个随机的 taskid。 
 
 下图是调用该接口的截图
 
 ![](/assets/sqlmap-10.png)图10
 
-#### @get\("/task//delete"\) {#gettaskdelete}
+#### @get\("/task/&lt;taskid&gt;/delete"\) {#gettaskdelete}
 
-该接口用于删除 taskid。在调用时指定 taskid，不指定 taskid 会有问题。 具体代码如下：
-
-```py
-def task_delete(taskid):
-    """
-    Delete an existing task
-    """
-    if taskid in DataStore.tasks:
-        DataStore.tasks.pop(taskid)
-        logger.debug("(%s) Deleted task" % taskid)
-        return jsonize({"success": True})
-    else:
-        response.status = 404
-        logger.warning("[%s] Non-existing task ID provided to task_delete()" % taskid)
-        return jsonize({"success": False, "message": "Non-existing task ID"})
-```
+该接口用于删除 taskid。在调用时指定 taskid，不指定 taskid 会有问题。 
 
 下图是调用该接口的截图：
 
@@ -251,20 +224,7 @@ def task_delete(taskid):
 
 #### @get\("/admin/list"\) {#getadminlistgetadminlist}
 
-该接口用于返回所有 taskid。在调用时指定 taskid，不指定 taskid 会有问题。 具体代码如下：
-
-```py
-def task_list(token=None):
-    """
-    Pull task list
-    """
-    tasks = {}
-    for key in DataStore.tasks:
-        if is_admin(token) or DataStore.tasks[key].remote_addr == request.remote_addr:
-            tasks[key] = dejsonize(scan_status(key))["status"]
-    logger.debug("(%s) Listed task pool (%s)" % (token, "admin" if is_admin(token) else request.remote_addr))
-    return jsonize({"success": True, "tasks": tasks, "tasks_num": len(tasks)})
-```
+该接口用于返回所有 taskid。在调用时指定 taskid，不指定 taskid 会有问题。 
 
 下图是调用该接口的截图：
 
@@ -272,216 +232,65 @@ def task_list(token=None):
 
 #### @get\("/admin/flush"\) {#getadminflushgetadminflush}
 
-该接口用于删除所有任务。在调用时指定admin token，不指定admin token可能会有问题。 具体代码如下：
-
-```py
-def task_flush(token=None):
-    """
-    Flush task spool (delete all tasks)
-    """
-    for key in list(DataStore.tasks):
-        if is_admin(token) or DataStore.tasks[key].remote_addr == request.remote_addr:
-            DataStore.tasks[key].engine_kill()
-            del DataStore.tasks[key]
-    logger.debug("(%s) Flushed task pool (%s)" % (token, "admin" if is_admin(token) else request.remote_addr))
-    return jsonize({"success": True})
-```
-
-下图是调用该接口的截图：
+该接口用于删除所有任务。在调用时指定admin token，不指定admin token可能会有问题。下图是调用该接口的截图：
 
 ![](/assets/sqlmap-13.png)13
 
-#### @get\("/option//list"\) {#getoptionlist}
+#### @get\("/option/&lt;taskid&gt;/list"\) {#getoptionlist}
 
-该接口可获取特定任务ID的列表选项，调用时请指定taskid，不然会出现问题。 具体代码如下：
-
-```py
-def option_list(taskid):
-    """
-    List options for a certain task ID
-    """
-    if taskid not in DataStore.tasks:
-        logger.warning("[%s] Invalid task ID provided to option_list()" % taskid)
-        return jsonize({"success": False, "message": "Invalid task ID"})
-    logger.debug("(%s) Listed task options" % taskid)
-    return jsonize({"success": True, "options": DataStore.tasks[taskid].get_options()})
-```
+该接口可获取特定任务ID的列表选项，调用时请指定taskid，不然会出现问题。 
 
 下图是调用该接口的截图：
 
 ![](/assets/sqlmap-14.png)
 
-#### @post\("/option//get"\) {#postoptionget}
+#### @post\("/option/&lt;taskid&gt;/get"\) {#postoptionget}
 
-该接口可获取特定任务ID的选项值，调用时请指定taskid，不然会出现问题。 具体代码如下：
-
-```py
-def option_get(taskid):
-    """
-    Get value of option(s) for a certain task ID
-    """
-    if taskid not in DataStore.tasks:
-        logger.warning("[%s] Invalid task ID provided to option_get()" % taskid)
-        return jsonize({"success": False, "message": "Invalid task ID"})
-    options = request.json or []
-    results = {}
-    for option in options:
-        if option in DataStore.tasks[taskid].options:
-            results[option] = DataStore.tasks[taskid].options[option]
-        else:
-            logger.debug("(%s) Requested value for unknown option '%s'" % (taskid, option))
-            return jsonize({"success": False, "message": "Unknown option '%s'" % option})
-    logger.debug("(%s) Retrieved values for option(s) '%s'" % (taskid, ",".join(options)))
-    return jsonize({"success": True, "options": results})
-```
+该接口可获取特定任务ID的选项值，调用时请指定taskid，不然会出现问题。
 
 下图是调用该接口的截图：
 
 ![](/assets/sqlmap-15.png)
 
-#### @post\("/option//set"\) {#postoptionset}
+#### @post\("/option/&lt;taskid&gt;/set"\) {#postoptionset}
 
-该接口为特定任务 ID 设置选项值，调用时请指定 taskid，不然会出现问题。 具体代码如下：
-
-```py
-def option_set(taskid):
-    """
-    Set value of option(s) for a certain task ID
-    """
-    if taskid not in DataStore.tasks:
-        logger.warning("[%s] Invalid task ID provided to option_set()" % taskid)
-        return jsonize({"success": False, "message": "Invalid task ID"})
-    if request.json is None:
-        logger.warning("[%s] Invalid JSON options provided to option_set()" % taskid)
-        return jsonize({"success": False, "message": "Invalid JSON options"})
-    for option, value in request.json.items():
-        DataStore.tasks[taskid].set_option(option, value)
-    logger.debug("(%s) Requested to set options" % taskid)
-    return jsonize({"success": True})
-```
+该接口为特定任务 ID 设置选项值，调用时请指定 taskid，不然会出现问题。 
 
 下图是调用该接口的截图：16
 
 ![](/assets/sqlmap-16.png)
 
-#### @post\("/scan//start"\) {#postscanstart}
+#### @post\("/scan/&lt;taskid&gt;/start"\) {#postscanstart}
 
-该接口定义开始扫描特定任务，调用时请指定 taskid，不然会出现问题。 具体代码如下:
-
-```py
-def scan_start(taskid):
-    """
-    Launch a scan
-    """
-    if taskid not in DataStore.tasks:
-        logger.warning("[%s] Invalid task ID provided to scan_start()" % taskid)
-        return jsonize({"success": False, "message": "Invalid task ID"})
-    if request.json is None:
-        logger.warning("[%s] Invalid JSON options provided to scan_start()" % taskid)
-        return jsonize({"success": False, "message": "Invalid JSON options"})
-    # Initialize sqlmap engine's options with user's provided options, if any
-    for option, value in request.json.items():
-        DataStore.tasks[taskid].set_option(option, value)
-    # Launch sqlmap engine in a separate process
-    DataStore.tasks[taskid].engine_start()
-    logger.debug("(%s) Started scan" % taskid)
-    return jsonize({"success": True, "engineid": DataStore.tasks[taskid].engine_get_id()})
-```
+该接口定义开始扫描特定任务，调用时请指定 taskid，不然会出现问题。 
 
 下图是调用该接口的截图：
 
 ![](/assets/sqlmap-17.png)
 
-#### @get\("/scan//stop"\) {#getscanstop}
+#### @get\("/scan/&lt;taskid&gt;/stop"\) {#getscanstop}
 
-该接口定义停止扫描特定任务，调用时请指定 taskid，不然会出现问题。 具体代码如下：
-
-```py
-def scan_stop(taskid):
-    """
-    Stop a scan
-    """
-    if (taskid not in DataStore.tasks or DataStore.tasks[taskid].engine_process() is None or DataStore.tasks[taskid].engine_has_terminated()):
-        logger.warning("[%s] Invalid task ID provided to scan_stop()" % taskid)
-        return jsonize({"success": False, "message": "Invalid task ID"})
-    DataStore.tasks[taskid].engine_stop()
-    logger.debug("(%s) Stopped scan" % taskid)
-    return jsonize({"success": True})
-```
+该接口定义停止扫描特定任务，调用时请指定 taskid，不然会出现问题。
 
 下图是调用该接口的截图：
 
 ![](/assets/sqlmap-18.png)
 
-#### @get\("/scan//kill"\) {#getscankill}
+#### @get\("/scan/&lt;taskid&gt;/kill"\) {#getscankill}
 
-该接口可杀死特定任务，需要指定 taskid，不然会出现问题。 具体代码如下：
-
-```py
-def scan_kill(taskid):
-    """
-    Kill a scan
-    """
-    if (taskid not in DataStore.tasks or DataStore.tasks[taskid].engine_process() is None or DataStore.tasks[taskid].engine_has_terminated()):
-        logger.warning("[%s] Invalid task ID provided to scan_kill()" % taskid)
-        return jsonize({"success": False, "message": "Invalid task ID"})
-    DataStore.tasks[taskid].engine_kill()
-    logger.debug("(%s) Killed scan" % taskid)
-    return jsonize({"success": True})
-```
+该接口可杀死特定任务，需要指定 taskid，不然会出现问题。 
 
 ####  {#getscanstatus}
 
-#### @get\("/scan//status"\) {#getscanstatus}
+#### @get\("/scan/taskid/status"\) {#getscanstatus}
 
-该接口可查询扫描状态，调用时请指定 taskid，不然会出现问题。 具体代码如下：
-
-```py
-def scan_status(taskid):
-    """
-    Returns status of a scan
-    """
-    if taskid not in DataStore.tasks:    
-        logger.warning("[%s] Invalid task ID provided to scan_status()" % taskid)
-        return jsonize({"success": False, "message": "Invalid task ID"})
-    if DataStore.tasks[taskid].engine_process() is None:
-        status = "not running"
-    else:
-        status = "terminated" if DataStore.tasks[taskid].engine_has_terminated() is True else "running"
-    logger.debug("(%s) Retrieved scan status" % taskid)
-    return jsonize({
-        "success": True,
-        "status": status,
-        "returncode": DataStore.tasks[taskid].engine_get_returncode()
-    })
-```
-
-下图是调用该接口的截图：19
+该接口可查询扫描状态，调用时请指定 taskid，不然会出现问题。 下图是调用该接口的截图：19
 
 ![](/assets/sqlmap-19.png)
 
-#### @get\("/scan//data"\) {#getscandata}
+#### @get\("/scan/&lt;taskid&gt;/data"\) {#getscandata}
 
-该接口可获得到扫描结果，调用时请指定 taskid，不然会出现问题。 具体代码如下：
-
-```py
-def scan_data(taskid):
-    """
-    Retrieve the data of a scan
-    """
-    json_data_message = list()
-    json_errors_message = list()
-    if taskid not in DataStore.taskslogger.warning("[%s] Invalid task ID provided to scan_data()" % taskid)
-        return jsonize({"success": False, "message": "Invalid task ID"})
-# Read all data from the IPC database for the taskid
-    for status, content_type, value in DataStore.current_db.execute("SELECT status, content_type, value FROM data WHERE taskid = ? ORDER BY id ASC", (taskid,)):
-        json_data_message.append({"status": status, "type": content_type, "value": dejsonize(value)})
-        # Read all error messages from the IPC database
-    for error in DataStore.current_db.execute("SELECT error FROM errors WHERE taskid = ? ORDER BY id ASC", (taskid,)):
-        json_errors_message.append(error)
-        logger.debug("(%s) Retrieved scan data and error messages" % taskid)
-    return jsonize({"success": True, "data": json_data_message, "error": json_errors_message})
-```
+该接口可获得到扫描结果，调用时请指定 taskid，不然会出现问题。
 
 下图是调用该接口的截图：
 
@@ -493,45 +302,9 @@ def scan_data(taskid):
 
 ![](/assets/sqlmap-21.png)
 
-#### @get\("/scan//log"\) {#getscanlog}
+#### @get\("/scan/&lt;taskid&gt;/log"\) {#getscanlog}
 
-该接口可查询特定任务的扫描的日志，调用时请指定 taskid，不然会出现问题。 具体代码如下：
-
-```py
-def scan_log(taskid):
-    """
-    Retrieve the log messages
-    """
-    json_log_messages = list()
-    if taskid not in DataStore.tasks:
-        logger.warning("[%s] Invalid task ID provided to scan_log()" % taskid)
-        return jsonize({"success": False, "message": "Invalid task ID"})
-    # Read all log messages from the IPC database
-    for time_, level, message in DataStore.current_db.execute("SELECT time, level, message FROM logs WHERE taskid = ? ORDER BY id ASC", (taskid,)):
-        json_log_messages.append({"time": time_, "level": level, "message": message})
-    logger.debug("(%s) Retrieved scan log messages" % taskid)
-    return jsonize({"success": True, "log": json_log_messages})
-
-
-def scan_log_limited(taskid, start, end):
-    """
-    Retrieve a subset of log messages
-    """
-    json_log_messages = list()
-    if taskid not in DataStore.tasks:
-        logger.warning("[%s] Invalid task ID provided to scan_log_limited()" % taskid)
-        return jsonize({"success": False, "message": "Invalid task ID"})
-    if not start.isdigit() or not end.isdigit() or end < start:
-        logger.warning("[%s] Invalid start or end value provided to scan_log_limited()" % taskid)
-        return jsonize({"success": False, "message": "Invalid start or end value, must be digits"})
-    start = max(1, int(start))
-    end = max(1, int(end))
-    # Read a subset of log messages from the IPC database
-    for time_, level, message in DataStore.current_db.execute("SELECT time, level, message FROM logs WHERE taskid = ? AND id >= ? AND id <= ? ORDER BY id ASC", (taskid, start, end)):
-        json_log_messages.append({"time": time_, "level": level, "message": message})
-    logger.debug("(%s) Retrieved scan log messages subset" % taskid)
-    return jsonize({"success": True, "log": json_log_messages})
-```
+该接口可查询特定任务的扫描的日志，调用时请指定 taskid，不然会出现问题。
 
 ### 准备
 
