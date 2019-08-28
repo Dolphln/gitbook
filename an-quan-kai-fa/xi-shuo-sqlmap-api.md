@@ -344,7 +344,9 @@ requests.post('http://127.0.0.1:8775/scan/cb9c4b4e4f1996b5/start', data=json.dum
 
 下面是一次完整的 POST 注入检测过程
 
-![](/assets/sqlmap-24.png)具体输入输出代码如下：
+![](/assets/sqlmap-24.png)
+
+具体输入输出代码如下：
 
 ```py
 >>> r = requests.get("http://127.0.0.1:8775/task/new")
