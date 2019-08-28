@@ -67,9 +67,7 @@ Options:
 python sqlmapapi.py -s
 ```
 
-命令成功后，在命令行中会返回一些信息。以下命令大概的意思是 api 服务端在本地 8775 端口上运行，admin token 为
-
-ff053d6517b86f06dec73bda814a70a1，IPC 数据库的位置在/var/folders/fz/16wqcnkd6477gz4wcr\_63xcc0000gn/T/sqlmapipc-N0m7P7，api 服务端已经和 IPC 数据库连接上了，正在使用 bottle 框架 wsgiref 标准接口。
+命令成功后，在命令行中会返回一些信息。以下命令大概的意思是 api 服务端在本地 8775 端口上运行，admin token 为ff053d6517b86f06dec73bda814a70a1，IPC 数据库的位置在/var/folders/fz/16wqcnkd6477gz4wcr\_63xcc0000gn/T/sqlmapipc-N0m7P7，api 服务端已经和 IPC 数据库连接上了，正在使用 bottle 框架 wsgiref 标准接口。
 
 ![](/assets/sqlmap-3.png)但是通过上面的这种方式开启 api 服务端有一个缺点，当服务端和客户端不是一台主机会连接不上，因此如果要解决这个问题，可以通过输入以下命令来开启 api 服务端:
 
@@ -247,7 +245,9 @@ def task_delete(taskid):
         return jsonize({"success": False, "message": "Non-existing task ID"})
 ```
 
-下图是调用该接口的截图：![](/assets/sqlmap-11.png)
+下图是调用该接口的截图：
+
+![](/assets/sqlmap-11.png)
 
 #### @get\("/admin/list"\)/@get\("/admin//list"\) {#getadminlistgetadminlist}
 
@@ -479,8 +479,6 @@ def scan_data(taskid):
 
 ![](/assets/sqlmap-21.png)
 
-
-
 #### @get\("/scan//log"\) {#getscanlog}
 
 /@get\("/scan//log//"\)
@@ -522,8 +520,6 @@ def scan_log_limited(taskid, start, end):
     logger.debug("(%s) Retrieved scan log messages subset" % taskid)
     return jsonize({"success": True, "log": json_log_messages})
 ```
-
-
 
 ### 准备
 
@@ -797,8 +793,6 @@ keepAlive: False
 
 3、扫描完成后获取扫描的结果。
 
-
-
 # 使用 Python3 编写 sqlmapapi 调用程序 {#python3-sqlmapapi}
 
 下面就来编写一个 sqlmapapi 调用程序，首先我们得再次明确一下流程：
@@ -986,8 +980,6 @@ if __name__ == '__main__':
 Github 地址：
 
 [https://github.com/FiveAourThe/sqlmap\_api\_demo](https://github.com/FiveAourThe/sqlmap_api_demo)
-
-
 
 原文地址：[https://paper.seebug.org/940/](https://paper.seebug.org/940/)
 
