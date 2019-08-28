@@ -266,7 +266,9 @@ def task_list(token=None):
     return jsonize({"success": True, "tasks": tasks, "tasks_num": len(tasks)})
 ```
 
-下图是调用该接口的截图：![](/assets/sqlmap-12.png)
+下图是调用该接口的截图：
+
+![](/assets/sqlmap-12.png)
 
 #### @get\("/admin/flush"\)/@get\("/admin//flush"\) {#getadminflushgetadminflush}
 
@@ -285,7 +287,9 @@ def task_flush(token=None):
     return jsonize({"success": True})
 ```
 
-下图是调用该接口的截图：![](/assets/sqlmap-13.png)13
+下图是调用该接口的截图：
+
+![](/assets/sqlmap-13.png)13
 
 #### @get\("/option//list"\) {#getoptionlist}
 
@@ -331,7 +335,9 @@ def option_get(taskid):
     return jsonize({"success": True, "options": results})
 ```
 
-下图是调用该接口的截图：![](/assets/sqlmap-15.png)
+下图是调用该接口的截图：
+
+![](/assets/sqlmap-15.png)
 
 #### @post\("/option//set"\) {#postoptionset}
 
@@ -354,7 +360,9 @@ def option_set(taskid):
     return jsonize({"success": True})
 ```
 
-下图是调用该接口的截图：16![](/assets/sqlmap-16.png)
+下图是调用该接口的截图：16
+
+![](/assets/sqlmap-16.png)
 
 #### @post\("/scan//start"\) {#postscanstart}
 
@@ -380,7 +388,9 @@ def scan_start(taskid):
     return jsonize({"success": True, "engineid": DataStore.tasks[taskid].engine_get_id()})
 ```
 
-下图是调用该接口的截图：![](/assets/sqlmap-17.png)
+下图是调用该接口的截图：
+
+![](/assets/sqlmap-17.png)
 
 #### @get\("/scan//stop"\) {#getscanstop}
 
@@ -399,7 +409,9 @@ def scan_stop(taskid):
     return jsonize({"success": True})
 ```
 
-下图是调用该接口的截图：![](/assets/sqlmap-18.png)
+下图是调用该接口的截图：
+
+![](/assets/sqlmap-18.png)
 
 #### @get\("/scan//kill"\) {#getscankill}
 
@@ -444,7 +456,9 @@ def scan_status(taskid):
     })
 ```
 
-下图是调用该接口的截图：19![](/assets/sqlmap-19.png)
+下图是调用该接口的截图：19
+
+![](/assets/sqlmap-19.png)
 
 #### @get\("/scan//data"\) {#getscandata}
 
