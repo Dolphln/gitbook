@@ -59,4 +59,5 @@
 * [安全开发](an-quan-kai-fa.md)
   * [sqlmap-tamper编写](an-quan-kai-fa/sqlmap-tamperbian-xie-zhi-nan.md)
   * [esapi的使用](an-quan-kai-fa/esapide-shi-yong.md)
+  * [细说 sqlmap\_api](an-quan-kai-fa/xi-shuo-sqlmap-api.md)
 
