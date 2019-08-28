@@ -17,19 +17,16 @@
 * sqlmap 下载地址：
   [https://github.com/sqlmapproject/sqlmap/zipball/master](https://github.com/sqlmapproject/sqlmap/zipball/master)
 
-安装过程我这里就不详细说了，不会的话可以问问度娘\([https://www.baidu.com/s?wd=sqlmap%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B](https://www.baidu.com/s?wd=sqlmap%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B)\)
+安装过程我这里就不详细说了，不会的话可以问问度娘\([https://www.baidu.com/s?wd=sqlmap%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B](https://www.baidu.com/s?wd=sqlmap安装教程)\)
 
 sqlmap的目录结构图如下：
 
 ![](/assets/sqlmap-1.png)
 
-
-
 sqlmap 安装完成后，输入以下命令，返回内容如下图一样，意味着安装成功：
 
 ```
 python sqlmap.py -h
-
 ```
 
 ![](/assets/sqlmap-2.png)
@@ -59,7 +56,7 @@ Options:
 ? -p PORT, --port=PORT? 指定服务端端口 (默认端口8775)
 ? --adapter=ADAPTER? ? ?服务端标准接口 (默认是 "wsgiref")
 ? --username=USERNAME? ?可空，设置用户名
-? --password=PASSWORD? ?可空，设置密码 
+? --password=PASSWORD? ?可空，设置密码
 ```
 
 ## 开启api服务端 {#api}
@@ -78,7 +75,6 @@ ff053d6517b86f06dec73bda814a70a1，IPC 数据库的位置在/var/folders/fz/16wq
 
 ```py
 python sqlmapapi.py -s -H "0.0.0.0" -p 8775
-
 ```
 
 命令成功后，远程客户端就可以通过指定远程主机 IP 和端口来连接到 API 服务端。
@@ -136,8 +132,6 @@ exit           退出客户端        t? ? ? ? ? ?
 
 既然了解了命令行接口模式中所有命令，那么下面就通过一个 sql 注入来演示该模式接口下检测 sql 注入的流程。
 
-
-
 #### 检测 GET 型注入 {#get}
 
 通过输入以下命令可以检测 GET 注入
@@ -156,8 +150,6 @@ new -u "url"
 
 ![](/assets/sqlmap-6.png)
 
-
-
 通过输入 data 命令，来获取扫描完成后注入出来的信息，若返回的内容中 data 字段不为空就说明存在注入。
 
 下图是存在 SQL 注入返回的内容，可以看到返回的内容有数据库类型、payload、注入的参数等等。  
@@ -174,8 +166,6 @@ new -r data.txt
 ```
 
 ![](/assets/sqlmap-9.png)
-
-
 
 ### 基于HTTP协议的接口模式 {#http}
 
@@ -297,8 +287,6 @@ def task_flush(token=None):
 
 下图是调用该接口的截图：![](/assets/sqlmap-13.png)13
 
-
-
 #### @get\("/option//list"\) {#getoptionlist}
 
 该接口可获取特定任务ID的列表选项，调用时请指定taskid，不然会出现问题。 具体代码如下：
@@ -313,7 +301,6 @@ def option_list(taskid):
         return jsonize({"success": False, "message": "Invalid task ID"})
     logger.debug("(%s) Listed task options" % taskid)
     return jsonize({"success": True, "options": DataStore.tasks[taskid].get_options()})
-
 ```
 
 下图是调用该接口的截图：
@@ -414,8 +401,6 @@ def scan_stop(taskid):
 
 下图是调用该接口的截图：![](/assets/sqlmap-18.png)
 
-
-
 #### @get\("/scan//kill"\) {#getscankill}
 
 该接口可杀死特定任务，需要指定 taskid，不然会出现问题。 具体代码如下：
@@ -457,7 +442,6 @@ def scan_status(taskid):
         "status": status,
         "returncode": DataStore.tasks[taskid].engine_get_returncode()
     })
-
 ```
 
 下图是调用该接口的截图：![](/assets/sqlmap-19.png)
@@ -476,13 +460,13 @@ def scan_data(taskid):
     if taskid not in DataStore.taskslogger.warning("[%s] Invalid task ID provided to scan_data()" % taskid)
         return jsonize({"success": False, "message": "Invalid task ID"})
 # Read all data from the IPC database for the taskid
-? ? for status, content_type, value in DataStore.current_db.execute("SELECT status, content_type, value FROM data WHERE taskid = ? ORDER BY id ASC", (taskid,)):
-? ? ? ? json_data_message.append({"status": status, "type": content_type, "value": dejsonize(value)})
-? ? # Read all error messages from the IPC database
-? ? for error in DataStore.current_db.execute("SELECT error FROM errors WHERE taskid = ? ORDER BY id ASC", (taskid,)):
-? ? ? ? json_errors_message.append(error)
-? ? logger.debug("(%s) Retrieved scan data and error messages" % taskid)
-? ? return jsonize({"success": True, "data": json_data_message, "error": json_errors_message})
+    for status, content_type, value in DataStore.current_db.execute("SELECT status, content_type, value FROM data WHERE taskid = ? ORDER BY id ASC", (taskid,)):
+        json_data_message.append({"status": status, "type": content_type, "value": dejsonize(value)})
+        # Read all error messages from the IPC database
+    for error in DataStore.current_db.execute("SELECT error FROM errors WHERE taskid = ? ORDER BY id ASC", (taskid,)):
+        json_errors_message.append(error)
+        logger.debug("(%s) Retrieved scan data and error messages" % taskid)
+    return jsonize({"success": True, "data": json_data_message, "error": json_errors_message})
 ```
 
 
