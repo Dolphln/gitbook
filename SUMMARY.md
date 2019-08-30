@@ -61,4 +61,5 @@
   * [esapi的使用](an-quan-kai-fa/esapide-shi-yong.md)
   * [细说 sqlmap\_api](an-quan-kai-fa/xi-shuo-sqlmap-api.md)
   * [burp插件开发\(一\)](an-quan-kai-fa/burpcha-jian-kai-fa.md)
+  * [burp插件开发\(二\)](an-quan-kai-fa/burpcha-jian-kai-53d128-4e8c29.md)
 

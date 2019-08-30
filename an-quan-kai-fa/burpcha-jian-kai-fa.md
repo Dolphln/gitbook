@@ -2,8 +2,6 @@
 
 Burp Suite支持Java,Python,Ruby编写他的插件，在这里我们选用Python作为我们插件的开发语言，Python分很多种，常见的比如Jython，Cython等等。今天我们用的是Jython，Jython为我们提供了Python的库，同时也提供了所有java的类。
 
-
-
 ## 二、配置Jython环境
 
 我们需要让Burp Suite加载我们的插件，在[https://www.jython.org/download](https://www.jython.org/download)（可下载Standalone独立jar包）。下载好后如下图使Burp Suite加载Python插件。
@@ -124,8 +122,8 @@ from burp import IIntruderPayloadGeneratorFactory
 from burp import IIntruderPayloadGenerator    
 from java.util import List, ArrayList    
 import random    
-    
-    
+
+
 class BurpExtender(IBurpExtender, IIntruderPayloadGeneratorFactory):    
   def registerExtenderCallbacks(self, callbacks):    
     self._callbacks = callbacks    
@@ -133,13 +131,13 @@ class BurpExtender(IBurpExtender, IIntruderPayloadGeneratorFactory):
     callbacks.setExtensionName("burp—plugin")    
     callbacks.registerIntruderPayloadGeneratorFactory(self)    
     return    
-    
+
   def getGeneratorName(self):    
     return "burp—plugin"    
-    
+
   def createNewInstance(self, attack):    
     return BHPFuzzer(self, attack)    
-    
+
 class BHPFuzzer(IIntruderPayloadGenerator):    
   def __init__(self, extender, attack):    
     self._extender = extender    
@@ -148,10 +146,10 @@ class BHPFuzzer(IIntruderPayloadGenerator):
     print "burp—plugin"    
     self.max_payloads = 1000    
     self.num_payloads = 0    
-    
+
     return    
-    
-    
+
+
   def hasMorePayloads(self):    
     print "hasMorePayloads called."    
     if self.num_payloads == self.max_payloads:    
@@ -160,38 +158,38 @@ class BHPFuzzer(IIntruderPayloadGenerator):
     else:    
       print "More payloads. Continuing."    
       return True    
-    
-    
+
+
   def getNextPayload(self,current_payload):    
     payload = "".join(chr(x) for x in current_payload)    
     payload = self.mutate_payload(payload)    
     self.num_payloads += 1    
     return payload    
-    
+
   def reset(self):    
     self.num_payloads = 0    
     return    
-    
+
   def mutate_payload(self,original_payload):    
     picker = random.randint(1,3)    
     offset  = random.randint(0,len(original_payload)-1)    
     payload = original_payload[:offset]    
-    
+
     if picker == 1:    
       payload += "'"    
-    
+
     if picker == 2:    
       payload += "<script>alert('xss');</script>";    
-    
+
     if picker == 3:    
       chunk_length = random.randint(len(payload[offset:]),len(payload)-1)    
       repeater     = random.randint(1,10)    
-    
+
       for i in range(repeater):    
         payload += original_payload[offset:offset+chunk_length]    
-    
+
     payload += original_payload[offset:]    
-    return payload 
+    return payload
 ```
 
 
