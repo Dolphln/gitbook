@@ -3,16 +3,22 @@
 功能：划分数据的训练集与测试集  
 参数解读：train\_test\_split \(\*arrays，test\_size, train\_size, rondom\_state=None, shuffle=True, stratify=None\)
 
+```py
+from sklearn.model_selection import train_test_split 
+
+X_train, X_test, y_train, y_test = train_test_split(train_data,train_target,test_size=0.2, random_state=0)
+```
+
 * arrays：特征数据和标签数据（array，list，dataframe等类型），要求所有数据长度相同。
 * test\_size / train\_size: 测试集/训练集的大小，若输入小数表示比例，若输入整数表示数据个数。
 * rondom\_state：随机种子（一个整数），其实就是一个划分标记，对于同一个数据集，如果rondom\_state相同，则划分结果也相同。
 * shuffle：是否打乱数据的顺序，再划分，默认True。
 * stratify：none或者array/series类型的数据，表示按这列进行分层采样。
+* X\_train,y\_train:构成了训练集
 
+* X\_test,y\_test：构成了测试集
 
-
-
-
+* 
 举个栗子：
 
 ```py
