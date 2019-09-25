@@ -30,6 +30,7 @@
   * [支持向量机SVM](ji-qi-xue-xi/zhi-chi-xiang-liang-ji-svm.md)
   * [python 文本特征提取 CountVectorizer, TfidfVectorizer](ji-qi-xue-xi/python-wen-ben-te-zheng-tiqu-countvectorizer-tfidfvectorizer.md)
   * [train\_test\_split数据集分割](ji-qi-xue-xi/traintest-split-shu-ju-ji-fen-ge.md)
+  * [基于机器学习的webshell检测的学习](ji-qi-xue-xi/ji-yu-ji-qi-xue-xi-de-webshell-jian-ce-de-xue-xi.md)
 * [运维安全](yun-wei-an-quan/README.md)
   * [nginx+lua实现简单的waf网页防火墙功能](yun-wei-an-quan/nginx+lua-shi-xian-jian-dan-de-waf-wang-ye-fang-huo-qiang-gong-neng.md)
   * [堡垒机](yun-wei-an-quan/bao-lei-ji.md)
